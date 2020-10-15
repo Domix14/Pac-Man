@@ -1,0 +1,31 @@
+cmake_minimum_required(VERSION 3.5)
+
+project(Pac-Man)
+
+
+
+#set(HEADERS )
+
+set(SOURCE
+	src/main.cpp )
+
+include_directories(
+  ${CMAKE_SOURCE_DIR}/include)
+
+add_executable (Pac-Man ${SOURCE} ${HEADERS})
+#file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
+
+
+#Find SFML
+set(SFML_STATIC_LIBRARIES TRUE)
+find_package(SFML 2.5 COMPONENTS graphics window system audio)
+if(SFML_FOUND)
+	target_link_libraries(Pac-Man sfml-graphics sfml-window sfml-system sfml-audio)
+endif(SFML_FOUND)
+
+
+
+if(WIN32)
+  file(COPY ${SFML_DIR}/../../../bin/openal32.dll
+    DESTINATION .)
+endif()
