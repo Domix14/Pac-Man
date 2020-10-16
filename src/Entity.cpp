@@ -1,5 +1,10 @@
 #include "Entity.h"
 
+Entity::Entity(Game* game) :
+	m_game(game)
+{
+}
+
 void Entity::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(m_sprite, states);
@@ -18,4 +23,9 @@ sf::Vector2f Entity::getPosition() const
 void Entity::setPosition(sf::Vector2f position)
 {
 	m_sprite.setPosition(position);
+}
+
+Game* Entity::getGame() const
+{
+	return m_game;
 }

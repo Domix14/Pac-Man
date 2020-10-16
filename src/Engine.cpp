@@ -2,7 +2,7 @@
 
 
 Engine::Engine(size_t width, size_t height, std::string title) :
-	sf::RenderWindow(sf::VideoMode(width, height), title),
+	sf::RenderWindow(sf::VideoMode(static_cast<unsigned int>(width), static_cast<unsigned int>(height)), title),
 	m_frameClock()
 {
 }

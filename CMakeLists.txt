@@ -6,12 +6,16 @@ project(Pac-Man)
 
 set(HEADERS
     include/Engine.h
-    include/Entity.h)
+    include/Entity.h
+    include/Game.h
+    include/PacManGame.h)
 
 set(SOURCE
 	src/main.cpp
   src/Engine.cpp
-  src/Entity.cpp )
+  src/Entity.cpp
+  src/Game.cpp
+  src/PacManGame.cpp )
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/include)

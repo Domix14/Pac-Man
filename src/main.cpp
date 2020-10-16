@@ -1,9 +1,9 @@
-#include "Engine.h"
+#include "PacManGame.h"
 
 int main()
 {
-	Engine newEngine(800, 600, "Pac-Man");
-	newEngine.start();
+	PacManGame game;
+	game.launch();
 
 	return 0;
 }
