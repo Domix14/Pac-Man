@@ -32,3 +32,24 @@ float Engine::getDeltaTime()
 {
 	return m_frameClock.restart().asSeconds();
 }
+
+void Engine::addEntity(Entity* entity)
+{
+	m_entities.push_back(entity);
+}
+
+void Engine::updateEntities(float deltaTime)
+{
+	for(auto& entity : m_entities)
+	{
+		entity->update(deltaTime);
+	}
+}
+
+void Engine::drawEntities()
+{
+	for (auto& entity : m_entities)
+	{
+		draw(*entity);
+	}
+}

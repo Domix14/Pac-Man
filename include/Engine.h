@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "Entity.h"
+
 class Engine :
     public sf::RenderWindow
 {
@@ -10,9 +12,12 @@ public:
 
 	void start();
 	float getDeltaTime();
-
+	void addEntity(Entity* entity);
+	void updateEntities(float deltaTime);
+	void drawEntities();
 	
 private:
 	sf::Clock m_frameClock;
+	std::vector<Entity*> m_entities;
 };
 
