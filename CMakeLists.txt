@@ -4,10 +4,11 @@ project(Pac-Man)
 
 
 
-#set(HEADERS )
+set(HEADERS Engine.h)
 
 set(SOURCE
-	src/main.cpp )
+	src/main.cpp
+  src/Engine.cpp )
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/include)
