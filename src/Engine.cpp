@@ -24,6 +24,12 @@ void Engine::start()
 		}
 		
 		const auto deltaTime = getDeltaTime();
+
+		updateEntities(deltaTime);
+		
+		clear();
+		drawEntities();
+		display();
 	}
 }
 
@@ -35,6 +41,7 @@ float Engine::getDeltaTime()
 
 void Engine::addEntity(Entity* entity)
 {
+	entity->loadResources(&m_resourceManager);
 	m_entities.push_back(entity);
 }
 
@@ -52,4 +59,9 @@ void Engine::drawEntities()
 	{
 		draw(*entity);
 	}
+}
+
+const ResourceManager* Engine::getResourceManager() const
+{
+	return &m_resourceManager;
 }

@@ -9,6 +9,7 @@ public:
 	
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 	virtual void update(float deltaTime) = 0;
+	virtual void loadResources(class ResourceManager* resourceManager) = 0;
 	
 	const sf::Sprite& getSprite() const;
 	sf::Vector2f getPosition() const;

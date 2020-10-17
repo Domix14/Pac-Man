@@ -8,14 +8,16 @@ set(HEADERS
     include/Engine.h
     include/Entity.h
     include/Game.h
-    include/PacManGame.h)
+    include/PacManGame.h
+    include/ResourceManager.h)
 
 set(SOURCE
 	src/main.cpp
   src/Engine.cpp
   src/Entity.cpp
   src/Game.cpp
-  src/PacManGame.cpp )
+  src/PacManGame.cpp
+  src/ResourceManager.cpp )
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/include)
