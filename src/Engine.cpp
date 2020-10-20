@@ -10,6 +10,11 @@ Engine::Engine(size_t width, size_t height, std::string title) :
 void Engine::start()
 {
 	m_frameClock.restart();
+
+	for(auto& entity : m_entities)
+	{
+		entity->beginPlay();
+	}
 	
 	while(isOpen())
 	{

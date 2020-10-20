@@ -8,6 +8,7 @@ public:
 	Entity(class Game* game);
 	
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+	virtual void beginPlay() = 0;
 	virtual void update(float deltaTime) = 0;
 	virtual void loadResources(class ResourceManager* resourceManager) = 0;
 	

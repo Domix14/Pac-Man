@@ -9,7 +9,10 @@ set(HEADERS
     include/Entity.h
     include/Game.h
     include/PacManGame.h
-    include/ResourceManager.h)
+    include/ResourceManager.h
+    include/PacMan.h
+    include/Map.h
+    include/Level.h)
 
 set(SOURCE
 	src/main.cpp
@@ -17,7 +20,9 @@ set(SOURCE
   src/Entity.cpp
   src/Game.cpp
   src/PacManGame.cpp
-  src/ResourceManager.cpp )
+  src/ResourceManager.cpp
+  src/PacMan.cpp
+  src/Level.cpp )
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/include)
