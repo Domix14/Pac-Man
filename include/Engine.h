@@ -16,11 +16,15 @@ public:
 	void addEntity(Entity* entity);
 	void updateEntities(float deltaTime);
 	void drawEntities();
+	void checkEntitiesCollisions();
+	void checkForDestroyedEntities();
 	const ResourceManager* getResourceManager() const;
+	void showFPS(bool bShow);
 	
 	
 private:
 	sf::Clock m_frameClock;
+	bool m_bShowFPS;
 	
 	std::vector<Entity*> m_entities;
 

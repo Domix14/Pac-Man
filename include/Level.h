@@ -13,6 +13,7 @@ public:
 	void beginPlay() override;
 	void loadResources(ResourceManager* resourceManager) override;
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+	void onCollision(Entity* otherEntity) override;
 
 private:
 	std::vector<sf::RectangleShape> m_blocks;

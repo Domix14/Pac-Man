@@ -2,6 +2,7 @@
 
 #include "ResourceManager.h"
 #include "Map.h"
+#include "Point.h"
 
 #include <iostream>
 
@@ -61,6 +62,20 @@ void PacMan::beginPlay()
 	m_nextDirection = m_direction;
 	m_movementSpeed = 60.f;
 	findDestination(m_direction, m_destination);
+
+	m_bEnableCollision = true;
+	m_collisionRect.width = BLOCK_WIDTH;
+	m_collisionRect.height = BLOCK_WIDTH;
+	m_bDrawCollisionRect = true;
+}
+
+void PacMan::onCollision(Entity* otherEntity)
+{
+	auto *point = dynamic_cast<Point*>(otherEntity);
+	if(point)
+	{
+		point->destroy();
+	}
 }
 
 void PacMan::processInput()
