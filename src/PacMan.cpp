@@ -8,14 +8,15 @@
 #include "Utilities.h"
 
 PacMan::PacMan(Game* game) :
-	Entity(game)
+	Entity(game),
+	m_movementSpeed(60.f)
 {
 }
 
 void PacMan::loadResources(ResourceManager* resourceManager)
 {
-	resourceManager->loadTexture("test", "image.png");
-	m_sprite.setTexture(resourceManager->getTexture("test"));
+	resourceManager->loadTexture("pacman", "resources/graphics/pacman.png");
+	m_sprite.setTexture(resourceManager->getTexture("pacman"));
 }
 
 void PacMan::update(float deltaTime)
@@ -24,7 +25,7 @@ void PacMan::update(float deltaTime)
 
 	sf::Vector2f moveDirection;
 
-	sf::Vector2i directionDiff = m_direction + m_nextDirection;
+	const auto directionDiff = m_direction + m_nextDirection;
 	if(directionDiff.x == 0 && directionDiff.y == 0)
 	{
 		if(findDestination(m_nextDirection, m_destination))
@@ -55,8 +56,8 @@ void PacMan::update(float deltaTime)
 
 void PacMan::beginPlay()
 {
-	setPosition({ 80.f, 80.f });
-	m_direction = sf::Vector2i(0.f, 1);
+	setPosition({ BLOCK_WIDTH, BLOCK_WIDTH });
+	m_direction = sf::Vector2i(0, 1);
 	m_nextDirection = m_direction;
 	m_movementSpeed = 60.f;
 	findDestination(m_direction, m_destination);
@@ -84,13 +85,13 @@ void PacMan::processInput()
 
 bool PacMan::findDestination(sf::Vector2i direction, sf::Vector2f& destination)
 {
-	const sf::Vector2i startTilePosition = static_cast<sf::Vector2i>(getPosition() / 80.f);
+	const sf::Vector2i startTilePosition = static_cast<sf::Vector2i>(getPosition() / BLOCK_WIDTH);
 	auto tilePosition = startTilePosition;
 	
 	
 
 	//Check if index is in range
-	auto checkIndexRange = [](const sf::Vector2i& indexes) {return !(indexes.x > 9 || indexes.x < 0 || indexes.y > 9 || indexes.y < 0); };
+	auto checkIndexRange = [](const sf::Vector2i& indexes) {return !(indexes.x > getMapMaxColumnIndex() || indexes.x < 0 || indexes.y > getMapMaxRowIndex() || indexes.y < 0); };
 
 	bool bFound = false;
 	do
@@ -106,7 +107,7 @@ bool PacMan::findDestination(sf::Vector2i direction, sf::Vector2f& destination)
 			tilePosition -= direction;
 			if(tilePosition != startTilePosition)
 			{
-				destination = sf::Vector2f(tilePosition.x * 80.f, tilePosition.y * 80.f);
+				destination = sf::Vector2f(tilePosition.x * BLOCK_WIDTH, tilePosition.y * BLOCK_WIDTH);
 				return true;
 			}
 
@@ -145,10 +146,7 @@ bool PacMan::findDestination(sf::Vector2i direction, sf::Vector2f& destination)
 
 	
 	
-	destination = sf::Vector2f(tilePosition.x * 80.f, tilePosition.y * 80.f);
-
-	LOG("Destination: ", m_destination);
-	LOG("Direction", static_cast<sf::Vector2f>(direction));
+	destination = sf::Vector2f(tilePosition.x * BLOCK_WIDTH, tilePosition.y * BLOCK_WIDTH);
 	
 	return true;
 }

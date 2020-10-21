@@ -16,13 +16,13 @@ void Level::beginPlay()
 	sf::RectangleShape block(sf::Vector2f(BLOCK_WIDTH, BLOCK_WIDTH));
 	block.setFillColor(sf::Color::Blue);
 
-	for(size_t x = 0;x < 10;x++)
+	for(size_t x = 0;x < 20;x++)
 	{
-		for(size_t y = 0;y < 10;y++)
+		for(size_t y = 0;y < 20;y++)
 		{
 			if(map[y][x] == 1)
 			{
-				block.setPosition(sf::Vector2f(x * 80.f, y * 80.f));
+				block.setPosition(sf::Vector2f(x * BLOCK_WIDTH, y * BLOCK_WIDTH));
 				m_blocks.push_back(block);
 			}
 		}

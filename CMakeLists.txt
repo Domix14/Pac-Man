@@ -28,7 +28,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/include)
 
 add_executable (Pac-Man ${SOURCE} ${HEADERS})
-#file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY resources DESTINATION ${CMAKE_BINARY_DIR})
 
 
 #Find SFML
