@@ -12,7 +12,10 @@ public:
 	Engine(size_t width, size_t height, std::string title);
 
 	void start();
-	float getDeltaTime();
+	float getDeltaTime() const;
+	float resetClock();
+	float getFPS(float deltaTime) const;
+	
 	void addEntity(Entity* entity);
 	void updateEntities(float deltaTime);
 	void drawEntities();

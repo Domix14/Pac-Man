@@ -10,7 +10,8 @@ Engine::Engine(size_t width, size_t height, std::string title) :
 
 void Engine::start()
 {
-	m_frameClock.restart();
+	m_resourceManager.loadFont("fps_font", "resources/fonts/fps_font.ttf");
+	resetClock();
 
 	for(auto& entity : m_entities)
 	{
@@ -29,23 +30,42 @@ void Engine::start()
 			}
 		}
 		
-		const auto deltaTime = getDeltaTime();
+		const auto deltaTime = resetClock();
 
 		updateEntities(deltaTime);
 		checkEntitiesCollisions();
 		checkForDestroyedEntities();
 		
 		clear();
+		
 		drawEntities();
+
+		if (m_bShowFPS)
+		{
+			sf::Text fpsText(std::to_string(static_cast<int>(getFPS(deltaTime))), m_resourceManager.getFont("fps_font"));
+			draw(fpsText);
+		}
+		
 		display();
 	}
 }
 
-//Returns time between frames and restart clock
-float Engine::getDeltaTime()
+float Engine::resetClock()
 {
 	return m_frameClock.restart().asSeconds();
 }
+
+float Engine::getFPS(float deltaTime) const
+{
+	return 1000.f / deltaTime;
+}
+
+//Returns time between frames
+float Engine::getDeltaTime() const
+{
+	return m_frameClock.getElapsedTime().asSeconds();
+}
+
 
 void Engine::addEntity(Entity* entity)
 {
@@ -62,7 +82,7 @@ void Engine::updateEntities(float deltaTime)
 }
 
 void Engine::drawEntities()
-{	
+{
 	for (auto& entity : m_entities)
 	{
 		draw(*entity);

@@ -26,3 +26,28 @@ const sf::Texture& ResourceManager::getTexture(const std::string& textureName)
 		return m_textures[textureName] = sf::Texture();
 	}
 }
+
+void ResourceManager::loadFont(const std::string& fontName, const std::string& fontPath)
+{
+	sf::Font newFont;
+	if (newFont.loadFromFile(fontPath))
+	{
+		m_fonts[fontName] = newFont;
+	}
+	else
+	{
+		std::cout << "Failed to find font";
+	}
+}
+
+const sf::Font& ResourceManager::getFont(const std::string& fontName)
+{
+	if (m_fonts.find(fontName) != m_fonts.end())
+	{
+		return m_fonts[fontName];
+	}
+	else
+	{
+		return m_fonts[fontName] = sf::Font();
+	}
+}

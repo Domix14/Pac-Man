@@ -16,7 +16,8 @@ void PacManGame::launch()
 
 	m_engine.addEntity(&m_level);
 	spawnPoints();
-	
+
+	m_engine.showFPS(true);
 	m_engine.start();
 }
 
