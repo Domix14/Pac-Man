@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <SFML/System/Vector2.hpp>
 
 #ifdef _DEBUG

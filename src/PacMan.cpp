@@ -4,8 +4,6 @@
 #include "Map.h"
 #include "Point.h"
 
-#include <iostream>
-
 #include "Utilities.h"
 
 PacMan::PacMan(Game* game) :
@@ -29,13 +27,13 @@ void PacMan::update(float deltaTime)
 	const auto directionDiff = m_direction + m_nextDirection;
 	if(directionDiff.x == 0 && directionDiff.y == 0)
 	{
-		if(findDestination(m_nextDirection, m_destination))
+		if(findDestination(m_nextDirection))
 		{
 			m_direction = m_nextDirection;
 		}
 	}
 	
-	sf::Vector2f nextPosition = getPosition() + (static_cast<sf::Vector2f>(m_direction) * m_movementSpeed * deltaTime);
+	const sf::Vector2f nextPosition = getPosition() + (static_cast<sf::Vector2f>(m_direction) * m_movementSpeed * deltaTime);
 	if (length(getPosition() - m_destination) > 2.f)
 	{
 		setPosition(nextPosition);
@@ -43,13 +41,13 @@ void PacMan::update(float deltaTime)
 	else
 	{
 		setPosition(m_destination);
-		if(findDestination(m_nextDirection, m_destination))
+		if(findDestination(m_nextDirection))
 		{
 			m_direction = m_nextDirection;
 		}
 		else
 		{
-			m_nextDirection = m_direction;
+			findDestination(m_direction);
 		}
 	}
 	
@@ -60,8 +58,9 @@ void PacMan::beginPlay()
 	setPosition({ BLOCK_WIDTH, BLOCK_WIDTH });
 	m_direction = sf::Vector2i(0, 1);
 	m_nextDirection = m_direction;
+	m_mapPosition = sf::Vector2i(1, 1);
 	m_movementSpeed = 60.f;
-	findDestination(m_direction, m_destination);
+	findDestination(m_direction);
 
 	m_bEnableCollision = true;
 	m_collisionRect.width = BLOCK_WIDTH;
@@ -98,70 +97,16 @@ void PacMan::processInput()
 	}
 }
 
-bool PacMan::findDestination(sf::Vector2i direction, sf::Vector2f& destination)
+bool PacMan::findDestination(sf::Vector2i direction)
 {
-	const sf::Vector2i startTilePosition = static_cast<sf::Vector2i>(getPosition() / BLOCK_WIDTH);
-	auto tilePosition = startTilePosition;
+	const auto tilePosition = m_mapPosition + direction;
 	
-	
-
-	//Check if index is in range
-	auto checkIndexRange = [](const sf::Vector2i& indexes) {return !(indexes.x > getMapMaxColumnIndex() || indexes.x < 0 || indexes.y > getMapMaxRowIndex() || indexes.y < 0); };
-
-	bool bFound = false;
-	do
+	if(map[tilePosition.y][tilePosition.x] == 0)
 	{
-		
-		tilePosition += direction;
+		m_mapPosition = tilePosition;
+		m_destination = sf::Vector2f(tilePosition.x * BLOCK_WIDTH, tilePosition.y * BLOCK_WIDTH);
+		return true;
+	}
 
-		
-		if (!checkIndexRange(tilePosition)) return false;
-
-		if(map[tilePosition.y][tilePosition.x] == 1)
-		{
-			tilePosition -= direction;
-			if(tilePosition != startTilePosition)
-			{
-				destination = sf::Vector2f(tilePosition.x * BLOCK_WIDTH, tilePosition.y * BLOCK_WIDTH);
-				return true;
-			}
-
-			return false;
-		}
-
-		int routesCount = 0;
-
-		auto nextTilePosition{ tilePosition + sf::Vector2i(0, -1) };
-		if (checkIndexRange(nextTilePosition) && map[nextTilePosition.y][nextTilePosition.x] != 1)
-		{
-			routesCount++;
-		}
-
-		nextTilePosition =  tilePosition + sf::Vector2i(1, 0) ;
-		if (checkIndexRange(nextTilePosition) && map[nextTilePosition.y][nextTilePosition.x] != 1)
-		{
-			routesCount++;
-		}
-
-		nextTilePosition = tilePosition + sf::Vector2i(0, 1);
-		if (checkIndexRange(nextTilePosition) && map[nextTilePosition.y][nextTilePosition.x] != 1)
-		{
-			routesCount++;
-		}
-
-		nextTilePosition = tilePosition + sf::Vector2i(-1, 0);
-		if (checkIndexRange(nextTilePosition) && map[nextTilePosition.y][nextTilePosition.x] != 1)
-		{
-			routesCount++;
-		}
-
-		if (routesCount > 2 || routesCount == 1) bFound = true;
-		
-	} while (!bFound);
-
-	
-	
-	destination = sf::Vector2f(tilePosition.x * BLOCK_WIDTH, tilePosition.y * BLOCK_WIDTH);
-	
-	return true;
+	return false;
 }
