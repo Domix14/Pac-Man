@@ -5,19 +5,22 @@
 PacManGame::PacManGame() :
 	Game(WINDOW_WIDTH, WINDOW_HEIGHT, "Pac-Man"),
 	m_pacMan(this),
+	m_ghost(this),
 	m_level(this)
 {
 }
 
 void PacManGame::launch()
 {
-	m_pacMan.setPosition({ 100.f, 100.f });
 	m_engine.addEntity(&m_pacMan);
+	m_engine.addEntity(&m_ghost);
 
 	m_engine.addEntity(&m_level);
 	spawnPoints();
 
 	m_engine.showFPS(true);
+
+	m_engine.setFramerateLimit(60);
 	m_engine.start();
 }
 

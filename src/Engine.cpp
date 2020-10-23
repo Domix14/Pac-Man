@@ -52,18 +52,18 @@ void Engine::start()
 
 float Engine::resetClock()
 {
-	return m_frameClock.restart().asSeconds();
+	return m_frameClock.restart().asMilliseconds() / 1000.f;
 }
 
 float Engine::getFPS(float deltaTime) const
 {
-	return 1000.f / deltaTime;
+	return 1.f / deltaTime;
 }
 
 //Returns time between frames
 float Engine::getDeltaTime() const
 {
-	return m_frameClock.getElapsedTime().asSeconds();
+	return m_frameClock.getElapsedTime().asMilliseconds() / 1000.f;
 }
 
 

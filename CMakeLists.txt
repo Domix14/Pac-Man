@@ -12,7 +12,9 @@ set(HEADERS
     include/ResourceManager.h
     include/PacMan.h
     include/Map.h
-    include/Level.h)
+    include/Level.h
+    include/Point.h
+    include/Ghost.h)
 
 set(SOURCE
 	src/main.cpp
@@ -22,7 +24,9 @@ set(SOURCE
   src/PacManGame.cpp
   src/ResourceManager.cpp
   src/PacMan.cpp
-  src/Level.cpp )
+  src/Level.cpp
+  src/Point.cpp
+  src/Ghost.cpp)
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/include)
