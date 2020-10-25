@@ -20,7 +20,7 @@ void PacManGame::launch()
 
 	m_engine.showFPS(true);
 
-	m_engine.setFramerateLimit(60);
+	m_engine.setFramerateLimit(144);
 	m_engine.start();
 }
 
