@@ -5,6 +5,7 @@
 #include "Utilities.h"
 
 #include <algorithm>
+#include <array>
 
 sf::Vector2i Path::getNextMapPosition()
 {
@@ -50,7 +51,7 @@ void Ghost::update(float deltaTime)
 }
 
 void Ghost::beginPlay()
-{
+{	
 	m_collisionRect.width = BLOCK_WIDTH;
 	m_collisionRect.height = BLOCK_WIDTH;
 	m_movementSpeed = 80.f;
@@ -77,7 +78,7 @@ void Ghost::beginPlay()
 	m_scatterPath.emplace_back(15, 1);
 	m_scatterPath.emplace_back(16, 1);
 	m_scatterPath.emplace_back(17, 1);
-	changeState(GhostState::Scatter);
+	changeState(GhostState::Frightened);
 	
 	m_bEnableCollision = true;
 }
@@ -108,7 +109,7 @@ void Ghost::findNextPosition()
 	{
 		case GhostState::Scatter:
 		{
-			if(m_mapPosition != m_scatterPath[0])
+			if (m_mapPosition != m_scatterPath[0])
 			{
 				goToPosition(m_scatterPath[0]);
 			}
@@ -118,6 +119,24 @@ void Ghost::findNextPosition()
 				m_path.positionIndex = 0;
 				updateDirection();
 			}
+			break;
+		}
+		
+		case GhostState::Frightened:
+		{
+			std::array<sf::Vector2i, 4> directions { sf::Vector2i{0,-1}, {1,0}, {0,1}, {-1,0} };
+			std::vector<sf::Vector2i> avaibleDirections;
+			avaibleDirections.reserve(3);
+			for(const auto& direction : directions)
+			{
+				if(direction != m_direction && map[(m_mapPosition + direction).y][(m_mapPosition + direction).x] == 0)
+				{
+					avaibleDirections.push_back(direction);
+				}
+			}
+
+			const int index = randRange(0, avaibleDirections.size() - 1);
+			goToPosition(m_mapPosition + avaibleDirections[index]);
 		}
 	}
 }

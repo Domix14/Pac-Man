@@ -9,6 +9,18 @@
 #define LOG(t, v)
 #endif
 
+static int randRange(int start, int end)
+{
+	static bool first = true;
+	if(first)
+	{
+		std::srand(time(NULL));
+		first = false;
+	}
+	if (start == end) return start;
+	return (std::rand() % (end - start)) + start;
+}
+
 static void log_implementation(std::string text, float value)
 {
 	std::cout << text << value << "\n";

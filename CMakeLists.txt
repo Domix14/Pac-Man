@@ -14,7 +14,8 @@ set(HEADERS
     include/Map.h
     include/Level.h
     include/Point.h
-    include/Ghost.h)
+    include/Ghost.h
+    include/Utilities.h)
 
 set(SOURCE
 	src/main.cpp
