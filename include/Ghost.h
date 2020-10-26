@@ -2,6 +2,7 @@
 #include "Entity.h"
 
 #include <stack>
+#include <assert.h>
 
 enum class GhostState
 {
@@ -9,6 +10,17 @@ enum class GhostState
 	Chase,
 	Frightened,
 	Eaten
+};
+
+struct Path
+{
+	Path() :
+	positionIndex(0) {}
+	
+	std::vector<sf::Vector2i> mapPositions;
+	size_t positionIndex;
+
+	sf::Vector2i getNextMapPosition();
 };
 
 class Ghost :
@@ -22,11 +34,20 @@ public:
 	virtual void beginPlay() override;
 	virtual void onCollision(Entity* otherEntity) override;
 
+	void changeState(GhostState newState);
+	void updateDirection();
+	void findNextPosition();
 	void goToPosition(sf::Vector2i position);
-	bool findRoute(std::vector<sf::Vector2i> path, std::stack<sf::Vector2i>& finalPath, const sf::Vector2i& destination);
+	bool findRoute(std::vector<sf::Vector2i> path, std::vector<sf::Vector2i>& finalPath, const sf::Vector2i& destination);
 	
 private:
-	std::stack<sf::Vector2i> m_path;
+	GhostState m_ghostState;
+
+	
+	Path m_path;
+	std::vector<sf::Vector2i> m_scatterPath;
+	//std::stack<sf::Vector2i> m_path;
+
 	
 	sf::Vector2i m_direction;
 	sf::Vector2i m_mapPosition;
