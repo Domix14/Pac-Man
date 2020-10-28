@@ -20,7 +20,7 @@ void Level::beginPlay()
 	{
 		for(size_t y = 0;y < 20;y++)
 		{
-			if(map[y][x] == 1)
+			if(map[y][x] == MapType::Wall)
 			{
 				block.setPosition(sf::Vector2f(x * BLOCK_WIDTH, y * BLOCK_WIDTH));
 				m_blocks.push_back(block);

@@ -31,7 +31,7 @@ void PacManGame::spawnPoints()
 	{
 		for(size_t y = 0;y < getMapMaxRowIndex();y++)
 		{
-			if(map[y][x] == 0)
+			if(map[y][x] == MapType::Move)
 			{
 				m_points.emplace_back(this);
 				m_points.back().setPosition(sf::Vector2f(x * BLOCK_WIDTH + 10.f, y * BLOCK_WIDTH + 10.f));

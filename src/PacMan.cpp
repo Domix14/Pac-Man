@@ -101,7 +101,7 @@ bool PacMan::findDestination(sf::Vector2i direction)
 {
 	const auto tilePosition = m_mapPosition + direction;
 	
-	if(map[tilePosition.y][tilePosition.x] == 0)
+	if(map[tilePosition.y][tilePosition.x] == MapType::Move)
 	{
 		m_mapPosition = tilePosition;
 		m_destination = sf::Vector2f(tilePosition.x * BLOCK_WIDTH, tilePosition.y * BLOCK_WIDTH);

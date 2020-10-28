@@ -2,13 +2,14 @@
 #include "Entity.h"
 
 #include <stack>
-#include <assert.h>
+#include <array>
 
 enum class GhostState
 {
 	Scatter,
 	Chase,
 	Frightened,
+	GhostHouse,
 	Eaten
 };
 
@@ -39,13 +40,17 @@ public:
 	void findNextPosition();
 	void goToPosition(sf::Vector2i position);
 	bool findRoute(std::vector<sf::Vector2i> path, std::vector<sf::Vector2i>& finalPath, const sf::Vector2i& destination);
+	bool checkPosition(sf::Vector2i position) const;
+	void setPosition(sf::Vector2f newPosition);
 	
 private:
 	GhostState m_ghostState;
 
+	std::array<sf::Vector2i, 2> teleportPositions{ sf::Vector2i{1,1}, {18,1} };
 	
 	Path m_path;
 	std::vector<sf::Vector2i> m_scatterPath;
+	std::vector<sf::Vector2i> m_ghostHouse;
 	//std::stack<sf::Vector2i> m_path;
 
 	

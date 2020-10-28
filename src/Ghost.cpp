@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <array>
+#include <list>
 
 sf::Vector2i Path::getNextMapPosition()
 {
@@ -37,6 +38,14 @@ void Ghost::update(float deltaTime)
 	}
 	else 
 	{
+		if (m_mapPosition == sf::Vector2i(18, 1))
+		{
+			m_mapPosition = sf::Vector2i(1, 1);
+			setPosition(sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH));
+			findNextPosition();
+			return;
+		}
+		
 		setPosition(m_destination);
 		if (m_path.positionIndex != 0)
 		{
@@ -56,10 +65,17 @@ void Ghost::beginPlay()
 	m_collisionRect.height = BLOCK_WIDTH;
 	m_movementSpeed = 80.f;
 
-	m_mapPosition = sf::Vector2i(15, 1);
+	m_mapPosition = sf::Vector2i(12, 14);
 	setPosition(sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH));
 
-
+	m_ghostHouse.emplace_back(8, 17);
+	m_ghostHouse.emplace_back(9, 17);
+	m_ghostHouse.emplace_back(10, 17);
+	m_ghostHouse.emplace_back(11, 17);
+	m_ghostHouse.emplace_back(9, 18);
+	m_ghostHouse.emplace_back(10, 18);
+	m_ghostHouse.emplace_back(11, 18);
+	
 	m_scatterPath.emplace_back(18, 1);
 	m_scatterPath.emplace_back(18, 2);
 	m_scatterPath.emplace_back(18, 3);
@@ -124,19 +140,29 @@ void Ghost::findNextPosition()
 		
 		case GhostState::Frightened:
 		{
-			std::array<sf::Vector2i, 4> directions { sf::Vector2i{0,-1}, {1,0}, {0,1}, {-1,0} };
-			std::vector<sf::Vector2i> avaibleDirections;
-			avaibleDirections.reserve(3);
-			for(const auto& direction : directions)
+			std::list<sf::Vector2i> directions{ {0,-1}, {1,0}, {0,1}, {-1,0} };
+			for(auto it = directions.begin();it != directions.end();)
 			{
-				if(direction != m_direction && map[(m_mapPosition + direction).y][(m_mapPosition + direction).x] == 0)
+				if(*it == m_direction || !checkPosition(m_mapPosition + *it))
 				{
-					avaibleDirections.push_back(direction);
+					it = directions.erase(it);
+				}
+				else
+				{
+					++it;
 				}
 			}
 
-			const int index = randRange(0, avaibleDirections.size() - 1);
-			goToPosition(m_mapPosition + avaibleDirections[index]);
+			const int index = randRange(0, directions.size() - 1);
+			goToPosition(m_mapPosition + *(std::next(directions.begin(), 0)));
+		}
+
+		case GhostState::Eaten:
+		{
+			if (m_mapPosition != m_ghostHouse[0])
+			{
+				goToPosition(m_ghostHouse[0]);
+			}
 		}
 	}
 }
@@ -144,6 +170,7 @@ void Ghost::findNextPosition()
 void Ghost::goToPosition(sf::Vector2i position)
 {
 	m_path.mapPositions.clear();
+	m_path.positionIndex = 0;
 	if(findRoute(std::vector<sf::Vector2i>{m_mapPosition}, m_path.mapPositions, position))
 	{
 		updateDirection();
@@ -158,7 +185,7 @@ bool Ghost::findRoute(std::vector<sf::Vector2i> path, std::vector<sf::Vector2i>&
 	auto addPath = [](sf::Vector2i pos, std::vector<sf::Vector2i> path) {path.push_back(pos); return path; };
 	
 	sf::Vector2i tilePosition = path.back() + sf::Vector2i(0, -1);
-	if (map[tilePosition.y][tilePosition.x] == 0 && std::find(path.begin(), path.end(), tilePosition) == path.end())
+	if (checkPosition(tilePosition) && std::find(path.begin(), path.end(), tilePosition) == path.end())
 	{
 		if (tilePosition == destination || findRoute(addPath(tilePosition, path), finalPath, destination))
 		{
@@ -168,7 +195,7 @@ bool Ghost::findRoute(std::vector<sf::Vector2i> path, std::vector<sf::Vector2i>&
 	}
 
 	tilePosition = path.back() + sf::Vector2i(1, 0);
-	if (map[tilePosition.y][tilePosition.x] == 0 && std::find(path.begin(), path.end(), tilePosition) == path.end())
+	if (checkPosition(tilePosition) && std::find(path.begin(), path.end(), tilePosition) == path.end())
 	{
 		if (tilePosition == destination || findRoute(addPath(tilePosition, path), finalPath, destination))
 		{
@@ -178,7 +205,7 @@ bool Ghost::findRoute(std::vector<sf::Vector2i> path, std::vector<sf::Vector2i>&
 	}
 	
 	tilePosition = path.back() + sf::Vector2i(0, 1);
-	if (map[tilePosition.y][tilePosition.x] == 0 && std::find(path.begin(), path.end(), tilePosition) == path.end())
+	if (checkPosition(tilePosition) && std::find(path.begin(), path.end(), tilePosition) == path.end())
 	{
 		if (tilePosition == destination || findRoute(addPath(tilePosition, path), finalPath, destination))
 		{
@@ -188,7 +215,7 @@ bool Ghost::findRoute(std::vector<sf::Vector2i> path, std::vector<sf::Vector2i>&
 	}
 
 	tilePosition = path.back() + sf::Vector2i(-1, 0);
-	if (map[tilePosition.y][tilePosition.x] == 0 && std::find(path.begin(), path.end(), tilePosition) == path.end())
+	if (checkPosition(tilePosition) && std::find(path.begin(), path.end(), tilePosition) == path.end())
 	{
 		if (tilePosition == destination || findRoute(addPath(tilePosition, path), finalPath, destination))
 		{
@@ -198,4 +225,18 @@ bool Ghost::findRoute(std::vector<sf::Vector2i> path, std::vector<sf::Vector2i>&
 	}
 	
 	return false;
+}
+
+bool Ghost::checkPosition(sf::Vector2i position) const
+{
+	if(map[position.y][position.x] <= 2)
+	{
+		return true;
+	}
+	return false;
+}
+
+void Ghost::setPosition(sf::Vector2f newPosition)
+{
+	m_sprite.setPosition(getMapOffset() + newPosition);
 }
