@@ -41,7 +41,7 @@ public:
 	void goToPosition(sf::Vector2i position);
 	bool findRoute(std::vector<sf::Vector2i> path, std::vector<sf::Vector2i>& finalPath, const sf::Vector2i& destination);
 	bool checkPosition(sf::Vector2i position) const;
-	void setPosition(sf::Vector2f newPosition);
+
 	
 private:
 	GhostState m_ghostState;

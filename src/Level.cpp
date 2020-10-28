@@ -16,13 +16,13 @@ void Level::beginPlay()
 	sf::RectangleShape block(sf::Vector2f(BLOCK_WIDTH, BLOCK_WIDTH));
 	block.setFillColor(sf::Color::Blue);
 
-	for(size_t x = 0;x < 20;x++)
+	for(size_t x = 0;x < getMapMaxColumnIndex() + 1;x++)
 	{
-		for(size_t y = 0;y < 20;y++)
+		for(size_t y = 0;y < getMapMaxRowIndex() + 1;y++)
 		{
 			if(map[y][x] == MapType::Wall)
 			{
-				block.setPosition(sf::Vector2f(x * BLOCK_WIDTH, y * BLOCK_WIDTH));
+				block.setPosition(getMapOffset() + sf::Vector2f(x * BLOCK_WIDTH, y * BLOCK_WIDTH));
 				m_blocks.push_back(block);
 			}
 		}

@@ -18,9 +18,9 @@ void PacManGame::launch()
 	m_engine.addEntity(&m_level);
 	spawnPoints();
 
-	m_engine.showFPS(true);
+	//m_engine.showFPS(true);
 
-	m_engine.setFramerateLimit(144);
+	//m_engine.setFramerateLimit(144);
 	m_engine.start();
 }
 
@@ -34,7 +34,7 @@ void PacManGame::spawnPoints()
 			if(map[y][x] == MapType::Move)
 			{
 				m_points.emplace_back(this);
-				m_points.back().setPosition(sf::Vector2f(x * BLOCK_WIDTH + 10.f, y * BLOCK_WIDTH + 10.f));
+				m_points.back().setPosition(getMapOffset() + sf::Vector2f(x * BLOCK_WIDTH + 10.f, y * BLOCK_WIDTH + 10.f));
 			}
 		}
 	}

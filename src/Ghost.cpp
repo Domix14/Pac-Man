@@ -38,13 +38,13 @@ void Ghost::update(float deltaTime)
 	}
 	else 
 	{
-		if (m_mapPosition == sf::Vector2i(18, 1))
+		/*if (m_mapPosition == sf::Vector2i(18, 1))
 		{
 			m_mapPosition = sf::Vector2i(1, 1);
 			setPosition(sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH));
 			findNextPosition();
 			return;
-		}
+		}*/
 		
 		setPosition(m_destination);
 		if (m_path.positionIndex != 0)
@@ -65,7 +65,7 @@ void Ghost::beginPlay()
 	m_collisionRect.height = BLOCK_WIDTH;
 	m_movementSpeed = 80.f;
 
-	m_mapPosition = sf::Vector2i(12, 14);
+	m_mapPosition = sf::Vector2i(2, 1);
 	setPosition(sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH));
 
 	m_ghostHouse.emplace_back(8, 17);
@@ -116,7 +116,7 @@ void Ghost::updateDirection()
 	const auto nextMapPosition = m_path.getNextMapPosition();
 	m_direction = nextMapPosition - m_mapPosition;
 	m_mapPosition = nextMapPosition;
-	m_destination = sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH);
+	m_destination = getMapOffset() + sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH);
 }
 
 void Ghost::findNextPosition()
@@ -234,9 +234,4 @@ bool Ghost::checkPosition(sf::Vector2i position) const
 		return true;
 	}
 	return false;
-}
-
-void Ghost::setPosition(sf::Vector2f newPosition)
-{
-	m_sprite.setPosition(getMapOffset() + newPosition);
 }
