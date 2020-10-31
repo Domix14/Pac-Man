@@ -22,6 +22,7 @@ struct Path
 	size_t positionIndex;
 
 	sf::Vector2i getNextMapPosition();
+	void addPosition(sf::Vector2i position);
 };
 
 class Ghost :
@@ -40,7 +41,7 @@ public:
 	void findNextPosition();
 	void goToPosition(sf::Vector2i position);
 	bool findRoute(std::vector<sf::Vector2i> path, std::vector<sf::Vector2i>& finalPath, const sf::Vector2i& destination);
-	bool checkPosition(sf::Vector2i position) const;
+	static bool checkPosition(sf::Vector2i position);
 
 	
 private:

@@ -16,6 +16,18 @@ sf::Vector2i Path::getNextMapPosition()
 	return position;
 }
 
+void Path::addPosition(sf::Vector2i position)
+{
+	if (!Ghost::checkPosition(position)) return;
+
+	mapPositions.push_back(position);
+	if(map[position.y][position.x] == MapType::Teleport)
+	{
+		position -= sf::Vector2i(getMapMaxColumnIndex(), 0);
+		mapPositions.push_back(abs(position));
+	}
+}
+
 Ghost::Ghost(Game* game) :
 	Entity(game)
 {
@@ -30,7 +42,6 @@ void Ghost::loadResources(ResourceManager* resourceManager)
 
 void Ghost::update(float deltaTime)
 {
-
 	const sf::Vector2f nextPosition = getPosition() + (static_cast<sf::Vector2f>(m_direction) * m_movementSpeed * deltaTime);
 	if (length(getPosition() - m_destination) > 2.f)
 	{
@@ -38,14 +49,6 @@ void Ghost::update(float deltaTime)
 	}
 	else 
 	{
-		/*if (m_mapPosition == sf::Vector2i(18, 1))
-		{
-			m_mapPosition = sf::Vector2i(1, 1);
-			setPosition(sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH));
-			findNextPosition();
-			return;
-		}*/
-		
 		setPosition(m_destination);
 		if (m_path.positionIndex != 0)
 		{
@@ -65,7 +68,7 @@ void Ghost::beginPlay()
 	m_collisionRect.height = BLOCK_WIDTH;
 	m_movementSpeed = 80.f;
 
-	m_mapPosition = sf::Vector2i(2, 1);
+	m_mapPosition = sf::Vector2i(1, 1);
 	setPosition(sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH));
 
 	m_ghostHouse.emplace_back(8, 17);
@@ -114,9 +117,19 @@ void Ghost::changeState(GhostState newState)
 void Ghost::updateDirection()
 {
 	const auto nextMapPosition = m_path.getNextMapPosition();
-	m_direction = nextMapPosition - m_mapPosition;
-	m_mapPosition = nextMapPosition;
-	m_destination = getMapOffset() + sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH);
+	if(length(static_cast<sf::Vector2f>(nextMapPosition - m_mapPosition)) > 1.f)
+	{
+		m_mapPosition = nextMapPosition;
+		m_destination = getMapOffset() + sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH);
+		m_direction = -m_direction;
+		setPosition(getMapOffset() + sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH));
+	}
+	else
+	{
+		m_direction = nextMapPosition - m_mapPosition;
+		m_mapPosition = nextMapPosition;
+		m_destination = getMapOffset() + sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH);
+	}
 }
 
 void Ghost::findNextPosition()
@@ -143,7 +156,7 @@ void Ghost::findNextPosition()
 			std::list<sf::Vector2i> directions{ {0,-1}, {1,0}, {0,1}, {-1,0} };
 			for(auto it = directions.begin();it != directions.end();)
 			{
-				if(*it == m_direction || !checkPosition(m_mapPosition + *it))
+				if(*it == -m_direction || !checkPosition(m_mapPosition + *it))
 				{
 					it = directions.erase(it);
 				}
@@ -153,9 +166,21 @@ void Ghost::findNextPosition()
 				}
 			}
 
-			const int index = randRange(0, directions.size() - 1);
-			goToPosition(m_mapPosition + *(std::next(directions.begin(), 0)));
+			if (!directions.empty())
+			{
+				const int index = randRange(0, directions.size() - 1);
+				goToPosition(m_mapPosition + *(std::next(directions.begin(), index)));
+			}
+			else
+			{
+				if (checkPosition(m_mapPosition + -m_direction))
+				{
+					goToPosition(m_mapPosition + -m_direction);
+				}
+			}
+			break;
 		}
+		
 
 		case GhostState::Eaten:
 		{
@@ -163,6 +188,7 @@ void Ghost::findNextPosition()
 			{
 				goToPosition(m_ghostHouse[0]);
 			}
+			break;
 		}
 	}
 }
@@ -171,7 +197,12 @@ void Ghost::goToPosition(sf::Vector2i position)
 {
 	m_path.mapPositions.clear();
 	m_path.positionIndex = 0;
-	if(findRoute(std::vector<sf::Vector2i>{m_mapPosition}, m_path.mapPositions, position))
+	if(length(static_cast<sf::Vector2f>(m_mapPosition - position)) <= 1.0f)
+	{
+		m_path.addPosition(position);
+		updateDirection();
+	}
+	else if(findRoute(std::vector<sf::Vector2i>{m_mapPosition}, m_path.mapPositions, position))
 	{
 		updateDirection();
 	}
@@ -180,7 +211,6 @@ void Ghost::goToPosition(sf::Vector2i position)
 bool Ghost::findRoute(std::vector<sf::Vector2i> path, std::vector<sf::Vector2i>& finalPath, const sf::Vector2i& destination)
 {
 	if (path.empty()) return false;
-	//TODO: Implement index range checking
 
 	auto addPath = [](sf::Vector2i pos, std::vector<sf::Vector2i> path) {path.push_back(pos); return path; };
 	
@@ -227,8 +257,18 @@ bool Ghost::findRoute(std::vector<sf::Vector2i> path, std::vector<sf::Vector2i>&
 	return false;
 }
 
-bool Ghost::checkPosition(sf::Vector2i position) const
+bool Ghost::checkPosition(sf::Vector2i position)
 {
+	if (position.x < 0 ||
+		position.y < 0 ||
+		position.x > getMapMaxColumnIndex() ||
+		position.y > getMapMaxRowIndex())
+	{
+		return false;
+	}
+
+	
+	
 	if(map[position.y][position.x] <= 2)
 	{
 		return true;

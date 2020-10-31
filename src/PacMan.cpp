@@ -55,10 +55,10 @@ void PacMan::update(float deltaTime)
 
 void PacMan::beginPlay()
 {
-	setPosition({ BLOCK_WIDTH, BLOCK_WIDTH });
 	m_direction = sf::Vector2i(0, 1);
 	m_nextDirection = m_direction;
 	m_mapPosition = sf::Vector2i(2, 1);
+	setPosition(getMapOffset() + sf::Vector2f{ m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH });
 	m_movementSpeed = 60.f;
 	findDestination(m_direction);
 
@@ -99,6 +99,13 @@ void PacMan::processInput()
 
 bool PacMan::findDestination(sf::Vector2i direction)
 {
+	if (map[m_mapPosition.y][m_mapPosition.x] == MapType::Teleport)
+	{
+		m_mapPosition -= sf::Vector2i(getMapMaxColumnIndex(), 0);
+		m_mapPosition = abs(m_mapPosition);
+		setPosition(sf::Vector2f{ m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH });
+	}
+	
 	const auto tilePosition = m_mapPosition + direction;
 	
 	if(map[tilePosition.y][tilePosition.x] <= MapType::Teleport)

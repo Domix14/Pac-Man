@@ -113,11 +113,15 @@ void Engine::checkEntitiesCollisions()
 
 void Engine::checkForDestroyedEntities()
 {
-	for(auto it = m_entities.begin(); it != m_entities.end(); ++it)
+	for(auto it = m_entities.begin(); it != m_entities.end();)
 	{
 		if(!(*it)->isAlive())
 		{
 			it = m_entities.erase(it);
+		}
+		else
+		{
+			++it;
 		}
 	}
 }
