@@ -5,7 +5,7 @@
 #include "PacMan.h"
 #include "Coin.h"
 #include "Level.h"
-#include "Ghost.h"
+#include "Blinky.h"
 #include "ScoreText.h"
 
 class PacManGame : public Game
@@ -20,7 +20,7 @@ public:
 	void restartPositions();
 protected:
 	PacMan m_pacMan;
-	Ghost m_ghost;
+	Blinky m_blinky;
 	std::vector<Coin> m_coins;
 	Level m_level;
 	ScoreText m_scoreText;

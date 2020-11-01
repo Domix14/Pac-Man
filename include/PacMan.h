@@ -14,6 +14,7 @@ public:
 	void processInput();
 	bool findDestination(sf::Vector2i direction);
 	void restart();
+	sf::Vector2i getMapPosition() const;
 
 protected:
 	const sf::Vector2i START_POSITION;

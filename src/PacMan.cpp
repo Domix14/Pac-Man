@@ -126,3 +126,8 @@ void PacMan::restart()
 	m_direction = START_DIRECTION;
 	m_nextDirection = m_direction;
 }
+
+sf::Vector2i PacMan::getMapPosition() const
+{
+	return m_mapPosition;
+}

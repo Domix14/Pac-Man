@@ -70,36 +70,6 @@ void Ghost::update(float deltaTime)
 
 void Ghost::beginPlay()
 {
-	restart();
-
-	m_ghostHouse.emplace_back(8, 17);
-	m_ghostHouse.emplace_back(9, 17);
-	m_ghostHouse.emplace_back(10, 17);
-	m_ghostHouse.emplace_back(11, 17);
-	m_ghostHouse.emplace_back(9, 18);
-	m_ghostHouse.emplace_back(10, 18);
-	m_ghostHouse.emplace_back(11, 18);
-	
-	m_scatterPath.emplace_back(18, 1);
-	m_scatterPath.emplace_back(18, 2);
-	m_scatterPath.emplace_back(18, 3);
-	m_scatterPath.emplace_back(18, 4);
-	m_scatterPath.emplace_back(18, 5);
-	m_scatterPath.emplace_back(17, 5);
-	m_scatterPath.emplace_back(16, 5);
-	m_scatterPath.emplace_back(16, 4);
-	m_scatterPath.emplace_back(16, 3);
-	m_scatterPath.emplace_back(15, 3);
-	m_scatterPath.emplace_back(14, 3);
-	m_scatterPath.emplace_back(13, 3);
-	m_scatterPath.emplace_back(13, 2);
-	m_scatterPath.emplace_back(13, 1);
-	m_scatterPath.emplace_back(14, 1);
-	m_scatterPath.emplace_back(15, 1);
-	m_scatterPath.emplace_back(16, 1);
-	m_scatterPath.emplace_back(17, 1);
-	changeState(GhostState::Frightened);
-	
 	
 }
 
@@ -159,40 +129,45 @@ void Ghost::findNextPosition()
 		
 		case GhostState::Frightened:
 		{
-			std::list<sf::Vector2i> directions{ {0,-1}, {1,0}, {0,1}, {-1,0} };
-			for(auto it = directions.begin();it != directions.end();)
-			{
-				if(*it == -m_direction || !checkPosition(m_mapPosition + *it))
-				{
-					it = directions.erase(it);
-				}
-				else
-				{
-					++it;
-				}
-			}
+			auto directions = findAvailableDirections();
 
 			if (!directions.empty())
 			{
 				const int index = randRange(0, static_cast<int>(directions.size() - 1));
 				goToPosition(m_mapPosition + *(std::next(directions.begin(), index)));
 			}
-			else
-			{
-				if (checkPosition(m_mapPosition + -m_direction))
-				{
-					goToPosition(m_mapPosition + -m_direction);
-				}
-			}
 			break;
 		}
 		
-
+		case GhostState::Chase:
+		{
+			const auto direction = findChaseDirection();
+			goToPosition(m_mapPosition + direction);
+			break;
+		}
+		
 		case GhostState::Eaten:
 		{
 			if (m_mapPosition != m_ghostHouse[0])
 			{
 				goToPosition(m_ghostHouse[0]);
+			}
+			else
+			{
+				changeState(GhostState::GhostHouse);
+			}
+			break;
+		}
+
+		case GhostState::GhostHouse:
+		{
+			if (m_mapPosition != m_ghostHouse[0])
+			{
+				goToPosition(m_ghostHouse[0]);
+			}
+			else
+			{
+				m_movementSpeed = 0.f;
 			}
 			break;
 		}
@@ -278,6 +253,27 @@ bool Ghost::checkPosition(sf::Vector2i position)
 		return true;
 	}
 	return false;
+}
+
+std::vector<sf::Vector2i> Ghost::findAvailableDirections() const
+{
+	std::vector<sf::Vector2i> availableDirections{ { {0,-1}, {1,0}, {0,1}, {-1,0} } };
+	for (auto it = availableDirections.begin(); it != availableDirections.end();)
+	{
+		if (*it == -m_direction || !checkPosition(m_mapPosition + *it))
+		{
+			it = availableDirections.erase(it);
+		}
+		else
+		{
+			++it;
+		}
+	}
+	if(availableDirections.empty())
+	{
+		availableDirections.push_back(-m_direction);
+	}
+	return availableDirections;
 }
 
 void Ghost::restart()

@@ -6,7 +6,7 @@
 PacManGame::PacManGame() :
 	Game(WINDOW_WIDTH, WINDOW_HEIGHT, "Pac-Man"),
 	m_pacMan(this),
-	m_ghost(this),
+	m_blinky(this, &m_pacMan),
 	m_level(this),
 	m_scoreText(this),
 	m_score(0)
@@ -17,7 +17,7 @@ void PacManGame::launch()
 {
 	m_engine.addEntity(&m_scoreText);
 	m_engine.addEntity(&m_pacMan);
-	m_engine.addEntity(&m_ghost);
+	m_engine.addEntity(&m_blinky);
 
 	m_engine.addEntity(&m_level);
 	spawnCoins();
@@ -71,5 +71,5 @@ void PacManGame::killPacMan()
 void PacManGame::restartPositions()
 {
 	m_pacMan.restart();
-	m_ghost.restart();
+	m_blinky.restart();
 }

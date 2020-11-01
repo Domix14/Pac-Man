@@ -42,10 +42,12 @@ public:
 	void goToPosition(sf::Vector2i position);
 	bool findRoute(std::vector<sf::Vector2i> path, std::vector<sf::Vector2i>& finalPath, const sf::Vector2i& destination);
 	static bool checkPosition(sf::Vector2i position);
+	virtual  sf::Vector2i findChaseDirection() = 0;
+	std::vector<sf::Vector2i> findAvailableDirections() const;
 	void restart();
 
 	
-private:
+protected:
 	GhostState m_ghostState;
 
 	std::array<sf::Vector2i, 2> teleportPositions{ sf::Vector2i{1,1}, {18,1} };
