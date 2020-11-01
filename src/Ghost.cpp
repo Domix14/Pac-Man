@@ -3,6 +3,7 @@
 #include "ResourceManager.h"
 #include "Map.h"
 #include "Utilities.h"
+#include "PacMan.h"
 
 #include <algorithm>
 #include <array>
@@ -23,20 +24,25 @@ void Path::addPosition(sf::Vector2i position)
 	mapPositions.push_back(position);
 	if(map[position.y][position.x] == MapType::Teleport)
 	{
-		position -= sf::Vector2i(getMapMaxColumnIndex(), 0);
+		position -= sf::Vector2i(static_cast<int>(getMapMaxColumnIndex()), 0);
 		mapPositions.push_back(abs(position));
 	}
 }
 
 Ghost::Ghost(Game* game) :
-	Entity(game)
+	Entity(game),
+	START_POSITION({ 2,1 }),
+	START_DIRECTION({ 0,1 }),
+	m_movementSpeed(80.f)
 {
-	
+	m_collisionRect.width = BLOCK_WIDTH;
+	m_collisionRect.height = BLOCK_WIDTH;
+	m_bEnableCollision = true;
 }
 
 void Ghost::loadResources(ResourceManager* resourceManager)
 {
-	resourceManager->loadTexture("ghost", "resources/graphics/ghost.png");
+	resourceManager->loadTexture("ghost", "resources/graphics/blinky.png");
 	m_sprite.setTexture(resourceManager->getTexture("ghost"));
 }
 
@@ -63,13 +69,8 @@ void Ghost::update(float deltaTime)
 }
 
 void Ghost::beginPlay()
-{	
-	m_collisionRect.width = BLOCK_WIDTH;
-	m_collisionRect.height = BLOCK_WIDTH;
-	m_movementSpeed = 80.f;
-
-	m_mapPosition = sf::Vector2i(1, 1);
-	setPosition(sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH));
+{
+	restart();
 
 	m_ghostHouse.emplace_back(8, 17);
 	m_ghostHouse.emplace_back(9, 17);
@@ -99,11 +100,16 @@ void Ghost::beginPlay()
 	m_scatterPath.emplace_back(17, 1);
 	changeState(GhostState::Frightened);
 	
-	m_bEnableCollision = true;
+	
 }
 
 void Ghost::onCollision(Entity* otherEntity)
 {
+	auto pacMan = dynamic_cast<PacMan*>(otherEntity);
+	if(pacMan)
+	{
+		
+	}
 }
 
 void Ghost::changeState(GhostState newState)
@@ -168,7 +174,7 @@ void Ghost::findNextPosition()
 
 			if (!directions.empty())
 			{
-				const int index = randRange(0, directions.size() - 1);
+				const int index = randRange(0, static_cast<int>(directions.size() - 1));
 				goToPosition(m_mapPosition + *(std::next(directions.begin(), index)));
 			}
 			else
@@ -266,12 +272,17 @@ bool Ghost::checkPosition(sf::Vector2i position)
 	{
 		return false;
 	}
-
-	
 	
 	if(map[position.y][position.x] <= 2)
 	{
 		return true;
 	}
 	return false;
+}
+
+void Ghost::restart()
+{
+	m_mapPosition = START_POSITION;
+	setPosition(getMapOffset() + sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH));
+	m_direction = START_DIRECTION;
 }

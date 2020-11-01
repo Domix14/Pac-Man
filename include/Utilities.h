@@ -15,7 +15,7 @@ static int randRange(int start, int end)
 	static bool first = true;
 	if(first)
 	{
-		std::srand(time(NULL));
+		std::srand(static_cast<unsigned>(time(NULL)));
 		first = false;
 	}
 	if (start == end) return start;

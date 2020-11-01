@@ -13,8 +13,12 @@ public:
 	
 	void processInput();
 	bool findDestination(sf::Vector2i direction);
+	void restart();
 
 protected:
+	const sf::Vector2i START_POSITION;
+	const sf::Vector2i START_DIRECTION;
+	
 	sf::Vector2i m_direction;
 	sf::Vector2i m_mapPosition;
 	sf::Vector2i m_nextDirection;

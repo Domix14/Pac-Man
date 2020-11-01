@@ -42,6 +42,7 @@ public:
 	void goToPosition(sf::Vector2i position);
 	bool findRoute(std::vector<sf::Vector2i> path, std::vector<sf::Vector2i>& finalPath, const sf::Vector2i& destination);
 	static bool checkPosition(sf::Vector2i position);
+	void restart();
 
 	
 private:
@@ -54,6 +55,8 @@ private:
 	std::vector<sf::Vector2i> m_ghostHouse;
 	//std::stack<sf::Vector2i> m_path;
 
+	const sf::Vector2i START_POSITION;
+	const sf::Vector2i START_DIRECTION;
 	
 	sf::Vector2i m_direction;
 	sf::Vector2i m_mapPosition;

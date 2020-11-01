@@ -2,14 +2,21 @@
 
 #include "ResourceManager.h"
 #include "Map.h"
-#include "Point.h"
+#include "Coin.h"
+#include "PacManGame.h"
 
 #include "Utilities.h"
 
 PacMan::PacMan(Game* game) :
 	Entity(game),
+	START_POSITION({2,1}),
+	START_DIRECTION({ 0,1 }),
 	m_movementSpeed(60.f)
 {
+	m_bEnableCollision = true;
+	m_collisionRect.width = BLOCK_WIDTH;
+	m_collisionRect.height = BLOCK_WIDTH;
+	m_bDrawCollisionRect = true;
 }
 
 void PacMan::loadResources(ResourceManager* resourceManager)
@@ -21,8 +28,6 @@ void PacMan::loadResources(ResourceManager* resourceManager)
 void PacMan::update(float deltaTime)
 {
 	processInput();
-
-	sf::Vector2f moveDirection;
 
 	const auto directionDiff = m_direction + m_nextDirection;
 	if(directionDiff.x == 0 && directionDiff.y == 0)
@@ -55,25 +60,21 @@ void PacMan::update(float deltaTime)
 
 void PacMan::beginPlay()
 {
-	m_direction = sf::Vector2i(0, 1);
-	m_nextDirection = m_direction;
-	m_mapPosition = sf::Vector2i(2, 1);
-	setPosition(getMapOffset() + sf::Vector2f{ m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH });
-	m_movementSpeed = 60.f;
+	restart();
 	findDestination(m_direction);
-
-	m_bEnableCollision = true;
-	m_collisionRect.width = BLOCK_WIDTH;
-	m_collisionRect.height = BLOCK_WIDTH;
-	m_bDrawCollisionRect = true;
 }
 
 void PacMan::onCollision(Entity* otherEntity)
 {
-	auto *point = dynamic_cast<Point*>(otherEntity);
+	auto *point = dynamic_cast<Coin*>(otherEntity);
 	if(point)
 	{
 		point->destroy();
+		auto* game = dynamic_cast<PacManGame*>(getGame());
+		if (game)
+		{
+			game->addScore(10);
+		}
 	}
 }
 
@@ -101,9 +102,9 @@ bool PacMan::findDestination(sf::Vector2i direction)
 {
 	if (map[m_mapPosition.y][m_mapPosition.x] == MapType::Teleport)
 	{
-		m_mapPosition -= sf::Vector2i(getMapMaxColumnIndex(), 0);
+		m_mapPosition -= sf::Vector2i(static_cast<int>(getMapMaxColumnIndex()), 0);
 		m_mapPosition = abs(m_mapPosition);
-		setPosition(sf::Vector2f{ m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH });
+		setPosition(getMapOffset() + sf::Vector2f{ m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH });
 	}
 	
 	const auto tilePosition = m_mapPosition + direction;
@@ -116,4 +117,12 @@ bool PacMan::findDestination(sf::Vector2i direction)
 	}
 
 	return false;
+}
+
+void PacMan::restart()
+{
+	m_mapPosition = START_POSITION;
+	setPosition(getMapOffset() + sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH));
+	m_direction = START_DIRECTION;
+	m_nextDirection = m_direction;
 }
