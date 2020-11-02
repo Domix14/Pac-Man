@@ -31,19 +31,13 @@ void Path::addPosition(sf::Vector2i position)
 
 Ghost::Ghost(Game* game) :
 	Entity(game),
-	START_POSITION({ 2,1 }),
+	START_POSITION({ 11,12 }),
 	START_DIRECTION({ 0,1 }),
 	m_movementSpeed(80.f)
 {
 	m_collisionRect.width = BLOCK_WIDTH;
 	m_collisionRect.height = BLOCK_WIDTH;
 	m_bEnableCollision = true;
-}
-
-void Ghost::loadResources(ResourceManager* resourceManager)
-{
-	resourceManager->loadTexture("ghost", "resources/graphics/blinky.png");
-	m_sprite.setTexture(resourceManager->getTexture("ghost"));
 }
 
 void Ghost::update(float deltaTime)
@@ -116,7 +110,7 @@ void Ghost::findNextPosition()
 		{
 			if (m_mapPosition != m_scatterPath[0])
 			{
-				goToPosition(m_scatterPath[0]);
+				goToTarget(m_scatterPath[0]);
 			}
 			else
 			{
@@ -134,15 +128,14 @@ void Ghost::findNextPosition()
 			if (!directions.empty())
 			{
 				const int index = randRange(0, static_cast<int>(directions.size() - 1));
-				goToPosition(m_mapPosition + *(std::next(directions.begin(), index)));
+				goToTarget(m_mapPosition + *(std::next(directions.begin(), index)));
 			}
 			break;
 		}
 		
 		case GhostState::Chase:
 		{
-			const auto direction = findChaseDirection();
-			goToPosition(m_mapPosition + direction);
+			findChaseDirection();
 			break;
 		}
 		
@@ -150,7 +143,7 @@ void Ghost::findNextPosition()
 		{
 			if (m_mapPosition != m_ghostHouse[0])
 			{
-				goToPosition(m_ghostHouse[0]);
+				goToTarget(m_ghostHouse[0]);
 			}
 			else
 			{
@@ -163,7 +156,7 @@ void Ghost::findNextPosition()
 		{
 			if (m_mapPosition != m_ghostHouse[0])
 			{
-				goToPosition(m_ghostHouse[0]);
+				goToTarget(m_ghostHouse[0]);
 			}
 			else
 			{
@@ -187,6 +180,36 @@ void Ghost::goToPosition(sf::Vector2i position)
 	{
 		updateDirection();
 	}
+}
+
+void Ghost::goToTarget(sf::Vector2i position)
+{
+	m_path.mapPositions.clear();
+	m_path.positionIndex = 0;
+	
+	auto directions = findAvailableDirections();
+	int bestIndex = -1;
+	float bestDistance = 0.f;
+	for (int i = 0; i < directions.size(); i++)
+	{
+		if (bestIndex == -1)
+		{
+			bestIndex = i;
+			bestDistance = length(static_cast<sf::Vector2f>(position - (m_mapPosition + directions[i])));
+		}
+		else
+		{
+			const auto distance = length(static_cast<sf::Vector2f>(position - (m_mapPosition + directions[i])));
+			if (distance < bestDistance)
+			{
+				bestIndex = i;
+				bestDistance = distance;
+			}
+		}
+	}
+
+	m_path.addPosition(m_mapPosition + directions[bestIndex]);
+	updateDirection();
 }
 
 bool Ghost::findRoute(std::vector<sf::Vector2i> path, std::vector<sf::Vector2i>& finalPath, const sf::Vector2i& destination)

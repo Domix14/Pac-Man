@@ -1,15 +1,15 @@
 #pragma once
 #include "Ghost.h"
-class Blinky :
+class Pinky :
 	public Ghost
 {
 public:
-	Blinky(class Game* game, const class PacMan* pacMan);
+	Pinky(class Game* game, const class PacMan* pacMan);
 
 	void findChaseDirection() override;
 	void beginPlay() override;
 	void loadResources(ResourceManager* resourceManager) override;
-	
+
 private:
 	const class PacMan* m_pacMan;
 };

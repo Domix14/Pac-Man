@@ -131,3 +131,8 @@ sf::Vector2i PacMan::getMapPosition() const
 {
 	return m_mapPosition;
 }
+
+sf::Vector2i PacMan::getDirection() const
+{
+	return m_direction;
+}

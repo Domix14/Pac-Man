@@ -31,7 +31,6 @@ class Ghost :
 public:
 	Ghost(Game* game);
 
-	virtual void loadResources(ResourceManager* resourceManager) override;
 	virtual void update(float deltaTime) override;
 	virtual void beginPlay() override;
 	virtual void onCollision(Entity* otherEntity) override;
@@ -40,9 +39,10 @@ public:
 	void updateDirection();
 	void findNextPosition();
 	void goToPosition(sf::Vector2i position);
+	void goToTarget(sf::Vector2i position);
 	bool findRoute(std::vector<sf::Vector2i> path, std::vector<sf::Vector2i>& finalPath, const sf::Vector2i& destination);
 	static bool checkPosition(sf::Vector2i position);
-	virtual  sf::Vector2i findChaseDirection() = 0;
+	virtual  void findChaseDirection() = 0;
 	std::vector<sf::Vector2i> findAvailableDirections() const;
 	void restart();
 

@@ -2,6 +2,7 @@
 
 #include "Utilities.h"
 #include "PacMan.h"
+#include "ResourceManager.h"
 
 Blinky::Blinky(Game* game, const PacMan* pacMan) :
 	Ghost(game), m_pacMan(pacMan)
@@ -32,34 +33,20 @@ Blinky::Blinky(Game* game, const PacMan* pacMan) :
 	m_scatterPath.emplace_back(16, 2);
 }
 
-sf::Vector2i Blinky::findChaseDirection()
+void Blinky::findChaseDirection()
 {
-	auto directions = findAvailableDirections();
-	int bestIndex = -1;
-	float bestDistance = 0.f;
-	for(int i = 0;i < directions.size();i++)
-	{
-		if(bestIndex == -1)
-		{
-			bestIndex = i;
-			bestDistance = length(static_cast<sf::Vector2f>(m_pacMan->getMapPosition() - (m_mapPosition + directions[i])));
-		}
-		else
-		{
-			const auto distance = length(static_cast<sf::Vector2f>(m_pacMan->getMapPosition() - (m_mapPosition + directions[i])));
-			if(distance < bestDistance)
-			{
-				bestIndex = i;
-				bestDistance = distance;
-			}
-		}
-	}
-	return directions[bestIndex];
+	goToTarget(m_pacMan->getMapPosition());
 }
 
 void Blinky::beginPlay()
 {
 	restart();
 
-	changeState(GhostState::GhostHouse);
+	changeState(GhostState::Scatter);
+}
+
+void Blinky::loadResources(ResourceManager* resourceManager)
+{
+	resourceManager->loadTexture("blinky", "resources/graphics/blinky.png");
+	m_sprite.setTexture(resourceManager->getTexture("blinky"));
 }

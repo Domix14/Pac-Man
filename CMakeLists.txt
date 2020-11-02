@@ -17,6 +17,7 @@ set(HEADERS
     include/Ghost.h
     include/ScoreText.h
     include/Blinky.h
+    include/Pinky.h
     include/Utilities.h)
 
 set(SOURCE
@@ -31,7 +32,8 @@ set(SOURCE
   src/Coin.cpp
   src/Ghost.cpp
   src/ScoreText.cpp
-  src/Blinky.cpp)
+  src/Blinky.cpp
+  src/Pinky.cpp)
 
 include_directories(
   ${CMAKE_SOURCE_DIR}/include)
