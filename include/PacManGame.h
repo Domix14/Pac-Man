@@ -7,6 +7,7 @@
 #include "Level.h"
 #include "Blinky.h"
 #include "Pinky.h"
+#include "Clyde.h"
 #include "ScoreText.h"
 
 class PacManGame : public Game
@@ -22,6 +23,7 @@ public:
 protected:
 	PacMan m_pacMan;
 	Blinky m_blinky;
+	Clyde m_clyde;
 	Pinky m_pinky;
 	std::vector<Coin> m_coins;
 	Level m_level;
