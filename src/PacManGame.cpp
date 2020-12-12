@@ -46,12 +46,21 @@ void PacManGame::spawnCoins()
 				m_coins.emplace_back(this);
 				m_coins.back().setPosition(getMapOffset() + sf::Vector2f(x * BLOCK_WIDTH + 5.f, y * BLOCK_WIDTH + 5.f));
 			}
+			else if(map[y][x] == MapType::PowerUpPosition)
+			{
+				m_Powers.emplace_back(this);
+				m_Powers.back().setPosition(getMapOffset() + sf::Vector2f(x * BLOCK_WIDTH + 5.f, y * BLOCK_WIDTH + 5.f));
+			}
 		}
 	}
 
-	for(auto& point : m_coins)
+	for(auto& coin : m_coins)
 	{
-		m_engine.addEntity(&point);
+		m_engine.addEntity(&coin);
+	}
+	for (auto& Power : m_Powers)
+	{
+		m_engine.addEntity(&Power);
 	}
 }
 

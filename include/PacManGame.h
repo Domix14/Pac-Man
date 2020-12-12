@@ -10,6 +10,7 @@
 #include "Clyde.h"
 #include "Inky.h"
 #include "ScoreText.h"
+#include "PowerUp.h"
 
 class PacManGame : public Game
 {
@@ -28,6 +29,7 @@ protected:
 	Pinky m_pinky;
 	Inky m_inky;
 	std::vector<Coin> m_coins;
+	std::vector<PowerUp> m_Powers;
 	Level m_level;
 	ScoreText m_scoreText;
 	

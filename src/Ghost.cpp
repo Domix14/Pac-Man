@@ -282,7 +282,7 @@ bool Ghost::checkPosition(sf::Vector2i position)
 		return false;
 	}
 	
-	if(map[position.y][position.x] <= 2)
+	if(map[position.y][position.x] <= MapType::GhostHouse)
 	{
 		return true;
 	}

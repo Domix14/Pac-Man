@@ -76,6 +76,19 @@ void PacMan::onCollision(Entity* otherEntity)
 			game->addScore(10);
 		}
 	}
+	else
+	{
+		auto* powerUp = dynamic_cast<PowerUp*>(otherEntity);
+		if(powerUp)
+		{
+			powerUp->destroy();
+			auto* game = dynamic_cast<PacManGame*>(getGame());
+			if (game)
+			{
+				game->addScore(100);
+			}
+		}
+	}
 }
 
 void PacMan::processInput()
