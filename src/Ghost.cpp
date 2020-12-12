@@ -84,6 +84,11 @@ void Ghost::changeState(GhostState newState)
 	findNextPosition();
 }
 
+sf::Vector2i Ghost::getMapPosition() const
+{
+	return m_mapPosition;
+}
+
 void Ghost::updateDirection()
 {
 	const auto nextMapPosition = m_path.getNextMapPosition();
@@ -104,6 +109,12 @@ void Ghost::updateDirection()
 
 void Ghost::findNextPosition()
 {
+	if (m_ghostState != GhostState::GhostHouse && map[m_mapPosition.y][m_mapPosition.x] == MapType::GhostHouse)
+	{
+		exitGhostHouse();
+		return;
+	}
+	
 	switch(m_ghostState)
 	{
 		case GhostState::Scatter:
@@ -297,6 +308,11 @@ std::vector<sf::Vector2i> Ghost::findAvailableDirections() const
 		availableDirections.push_back(-m_direction);
 	}
 	return availableDirections;
+}
+
+void Ghost::exitGhostHouse()
+{
+	goToTarget(sf::Vector2i(11, 11));
 }
 
 void Ghost::restart()

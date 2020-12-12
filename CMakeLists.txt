@@ -19,6 +19,7 @@ set(HEADERS
     include/Blinky.h
     include/Pinky.h
     include/Clyde.h
+    include/Inky.h
     include/Utilities.h)
 
 set(SOURCE
@@ -35,6 +36,7 @@ set(SOURCE
   src/ScoreText.cpp
   src/Blinky.cpp
   src/Clyde.cpp
+  src/Inky.cpp
   src/Pinky.cpp)
 
 include_directories(

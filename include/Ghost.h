@@ -36,6 +36,7 @@ public:
 	virtual void onCollision(Entity* otherEntity) override;
 
 	void changeState(GhostState newState);
+	sf::Vector2i getMapPosition() const;
 	void updateDirection();
 	void findNextPosition();
 	void goToPosition(sf::Vector2i position);
@@ -44,6 +45,7 @@ public:
 	static bool checkPosition(sf::Vector2i position);
 	virtual  void findChaseDirection() = 0;
 	std::vector<sf::Vector2i> findAvailableDirections() const;
+	void exitGhostHouse();
 	void restart();
 
 	
@@ -55,7 +57,6 @@ protected:
 	Path m_path;
 	std::vector<sf::Vector2i> m_scatterPath;
 	std::vector<sf::Vector2i> m_ghostHouse;
-	//std::stack<sf::Vector2i> m_path;
 
 	const sf::Vector2i START_POSITION;
 	const sf::Vector2i START_DIRECTION;

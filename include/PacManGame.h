@@ -8,6 +8,7 @@
 #include "Blinky.h"
 #include "Pinky.h"
 #include "Clyde.h"
+#include "Inky.h"
 #include "ScoreText.h"
 
 class PacManGame : public Game
@@ -25,6 +26,7 @@ protected:
 	Blinky m_blinky;
 	Clyde m_clyde;
 	Pinky m_pinky;
+	Inky m_inky;
 	std::vector<Coin> m_coins;
 	Level m_level;
 	ScoreText m_scoreText;

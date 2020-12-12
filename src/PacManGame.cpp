@@ -9,6 +9,7 @@ PacManGame::PacManGame() :
 	m_blinky(this, &m_pacMan),
 	m_pinky(this, &m_pacMan),
 	m_clyde(this, &m_pacMan),
+	m_inky(this, &m_pacMan, &m_blinky),
 	m_level(this),
 	m_scoreText(this),
 	m_score(0)
@@ -22,6 +23,7 @@ void PacManGame::launch()
 	m_engine.addEntity(&m_blinky);
 	m_engine.addEntity(&m_pinky);
 	m_engine.addEntity(&m_clyde);
+	m_engine.addEntity(&m_inky);
 
 	m_engine.addEntity(&m_level);
 	spawnCoins();

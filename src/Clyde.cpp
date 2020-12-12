@@ -71,7 +71,7 @@ void Clyde::beginPlay()
 {
 	restart();
 
-	changeState(GhostState::Chase);
+	changeState(GhostState::Scatter);
 }
 
 void Clyde::loadResources(ResourceManager* resourceManager)
