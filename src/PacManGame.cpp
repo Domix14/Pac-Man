@@ -20,6 +20,7 @@ PacManGame::PacManGame() :
 	m_statesProperties[NewGame].emplace_back(2.f, 0, 1, GameState::Scatter, GhostState::GhostHouse);
 	m_statesProperties[Scatter].emplace_back(10.f, 0, 1, GameState::Chase, GhostState::Scatter);
 	m_statesProperties[Chase].emplace_back(10.f, 0, 1, GameState::Scatter, GhostState::Chase);
+	m_statesProperties[Frightened].emplace_back(10.f, 0, 1, GameState::Scatter, GhostState::Frightened);
 }
 
 PacManGame::~PacManGame()

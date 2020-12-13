@@ -73,7 +73,10 @@ void Ghost::onCollision(Entity* otherEntity)
 	auto pacMan = dynamic_cast<PacMan*>(otherEntity);
 	if(pacMan)
 	{
-		
+		if(m_ghostState == GhostState::Frightened)
+		{
+			changeState(GhostState::Eaten);
+		}
 	}
 }
 
@@ -155,11 +158,11 @@ void Ghost::findNextPosition()
 		{
 			if (m_mapPosition != m_ghostHouse[0])
 			{
-				goToTarget(sf::Vector2i(11, 11));
+				goToTarget(m_ghostHouse[0]);
 			}
 			else
 			{
-				changeState(GhostState::GhostHouse);
+				changeState(GhostState::Scatter);
 			}
 			break;
 		}

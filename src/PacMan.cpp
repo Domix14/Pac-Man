@@ -86,6 +86,7 @@ void PacMan::onCollision(Entity* otherEntity)
 			if (game)
 			{
 				game->addScore(100);
+				game->changeState(GameState::Frightened);
 			}
 		}
 	}
