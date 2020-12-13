@@ -32,6 +32,7 @@ void Engine::start()
 		
 		const auto deltaTime = resetClock();
 
+		
 		updateEntities(deltaTime);
 		checkEntitiesCollisions();
 		checkForDestroyedEntities();

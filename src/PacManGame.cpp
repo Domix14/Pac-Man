@@ -3,8 +3,11 @@
 #include "Map.h"
 #include "Utilities.h"
 
+
+
 PacManGame::PacManGame() :
 	Game(WINDOW_WIDTH, WINDOW_HEIGHT, "Pac-Man"),
+	m_currentLevel(0),
 	m_pacMan(this),
 	m_blinky(this, &m_pacMan),
 	m_pinky(this, &m_pacMan),
@@ -14,6 +17,11 @@ PacManGame::PacManGame() :
 	m_scoreText(this),
 	m_score(0)
 {
+}
+
+PacManGame::~PacManGame()
+{
+	
 }
 
 void PacManGame::launch()
@@ -31,7 +39,12 @@ void PacManGame::launch()
 	//m_engine.showFPS(true);
 
 	//m_engine.setFramerateLimit(144);
+	
 	m_engine.start();
+}
+
+void PacManGame::update(float deltaTime)
+{
 }
 
 void PacManGame::spawnCoins()
@@ -87,4 +100,38 @@ void PacManGame::restartPositions()
 {
 	m_pacMan.restart();
 	m_blinky.restart();
+}
+
+void PacManGame::restartGame()
+{
+	changeState(GameState::NewGame);
+	restartPositions();
+}
+
+void PacManGame::changeState(GameState state)
+{
+	auto& properties = m_statesProperties[state];
+	for(auto& p : properties)
+	{
+		if(p.firstLevel <= m_currentLevel && p.lastLevel >= m_currentLevel)
+		{
+			m_stateTimer = p.duration;
+		}
+	}
+}
+
+void PacManGame::updateState(float deltaTime)
+{
+	m_stateTimer -= deltaTime;
+	if(m_stateTimer <= 0.f)
+	{
+		auto& properties = m_statesProperties[m_state];
+		for (auto& p : properties)
+		{
+			if (p.firstLevel <= m_currentLevel && p.lastLevel >= m_currentLevel)
+			{
+				changeState(p.nextState);
+			}
+		}
+	}
 }

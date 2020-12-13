@@ -12,17 +12,46 @@
 #include "ScoreText.h"
 #include "PowerUp.h"
 
+enum GameState
+{
+	Exit = -1,
+	NewGame = 0,
+	Scatter = 1,
+	Chase = 2,
+	Frightened = 3,
+	Dead = 4
+};
+
+struct StateProperties
+{
+	float duration;
+	int firstLevel;
+	int lastLevel;
+	GameState nextState;
+};
+
 class PacManGame : public Game
 {
 public:
 	PacManGame();
-	virtual void launch() override;
+	~PacManGame();
+	void launch() override;
+	void update(float deltaTime) override;
+	
 
 	void spawnCoins();
 	void addScore(size_t score);
 	void killPacMan();
 	void restartPositions();
-protected:
+	void restartGame();
+	void changeState(GameState state);
+	void updateState(float deltaTime);
+private:
+	GameState m_state;
+	std::unordered_map<GameState, std::vector<StateProperties>> m_statesProperties;
+	int m_currentLevel;
+	float m_stateTimer;
+	
 	PacMan m_pacMan;
 	Blinky m_blinky;
 	Clyde m_clyde;

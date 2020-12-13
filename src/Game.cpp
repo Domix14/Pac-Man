@@ -10,6 +10,10 @@ void Game::launch()
 	m_engine.start();
 }
 
+void Game::update(float deltaTime)
+{
+}
+
 const Engine* Game::getEngine() const
 {
 	return &m_engine;
