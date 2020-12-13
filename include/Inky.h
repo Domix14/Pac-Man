@@ -8,7 +8,6 @@ public:
 	Inky(Game* game, const class PacMan* pacMan, const Ghost* blinky);
 
 	void findChaseDirection() override;
-	void beginPlay() override;
 	void loadResources(ResourceManager* resourceManager) override;
 
 private:

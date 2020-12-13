@@ -17,6 +17,9 @@ PacManGame::PacManGame() :
 	m_scoreText(this),
 	m_score(0)
 {
+	m_statesProperties[NewGame].emplace_back(2.f, 0, 1, GameState::Scatter, GhostState::GhostHouse);
+	m_statesProperties[Scatter].emplace_back(10.f, 0, 1, GameState::Chase, GhostState::Scatter);
+	m_statesProperties[Chase].emplace_back(10.f, 0, 1, GameState::Scatter, GhostState::Chase);
 }
 
 PacManGame::~PacManGame()
@@ -36,11 +39,12 @@ void PacManGame::launch()
 	getEngine()->addEntity(&m_level);
 	spawnCoins();
 
-	restartPositions();
+	restartGame();
 }
 
 void PacManGame::update(float deltaTime)
 {
+	updateState(deltaTime);
 }
 
 void PacManGame::spawnCoins()
@@ -103,8 +107,8 @@ void PacManGame::restartPositions()
 
 void PacManGame::restartGame()
 {
-	changeState(GameState::NewGame);
 	restartPositions();
+	changeState(GameState::NewGame);
 }
 
 void PacManGame::changeState(GameState state)
@@ -114,7 +118,12 @@ void PacManGame::changeState(GameState state)
 	{
 		if(p.firstLevel <= m_currentLevel && p.lastLevel >= m_currentLevel)
 		{
+			m_state = state;
 			m_stateTimer = p.duration;
+			m_blinky.changeState(p.ghostState);
+			m_pinky.changeState(p.ghostState);
+			m_inky.changeState(p.ghostState);
+			m_clyde.changeState(p.ghostState);
 		}
 	}
 }

@@ -7,7 +7,6 @@ public:
 	Blinky(class Game* game, const class PacMan* pacMan);
 
 	void findChaseDirection() override;
-	void beginPlay() override;
 	void loadResources(ResourceManager* resourceManager) override;
 	
 private:

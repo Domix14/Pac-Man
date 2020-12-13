@@ -65,7 +65,7 @@ void Ghost::update(float deltaTime)
 
 void Ghost::beginPlay()
 {
-	
+	findNextPosition();
 }
 
 void Ghost::onCollision(Entity* otherEntity)
@@ -82,7 +82,7 @@ void Ghost::changeState(GhostState newState)
 	if (m_ghostState == newState) return;
 
 	m_ghostState = newState;
-	findNextPosition();
+	
 }
 
 sf::Vector2i Ghost::getMapPosition() const
@@ -155,7 +155,7 @@ void Ghost::findNextPosition()
 		{
 			if (m_mapPosition != m_ghostHouse[0])
 			{
-				goToTarget(m_ghostHouse[0]);
+				goToTarget(sf::Vector2i(11, 11));
 			}
 			else
 			{
@@ -172,7 +172,9 @@ void Ghost::findNextPosition()
 			}
 			else
 			{
-				m_movementSpeed = 0.f;
+				m_path.mapPositions = m_ghostHouse;
+				m_path.positionIndex = 0;
+				updateDirection();
 			}
 			break;
 		}
@@ -292,10 +294,16 @@ bool Ghost::checkPosition(sf::Vector2i position)
 
 std::vector<sf::Vector2i> Ghost::findAvailableDirections() const
 {
+	auto position = m_mapPosition;
+	if(!m_path.mapPositions.empty())
+	{
+		position = m_path.mapPositions.back();
+	}
+	
 	std::vector<sf::Vector2i> availableDirections{ { {0,-1}, {1,0}, {0,1}, {-1,0} } };
 	for (auto it = availableDirections.begin(); it != availableDirections.end();)
 	{
-		if (*it == -m_direction || !checkPosition(m_mapPosition + *it))
+		if (*it == -m_direction || !checkPosition(position + *it))
 		{
 			it = availableDirections.erase(it);
 		}
@@ -313,7 +321,7 @@ std::vector<sf::Vector2i> Ghost::findAvailableDirections() const
 
 void Ghost::exitGhostHouse()
 {
-	goToTarget(sf::Vector2i(11, 10));
+	goToTarget(sf::Vector2i(11, 11));
 }
 
 void Ghost::restart()

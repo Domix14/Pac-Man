@@ -7,13 +7,13 @@
 Blinky::Blinky(Game* game, const PacMan* pacMan) :
 	Ghost(game), m_pacMan(pacMan)
 {
-	m_ghostHouse.emplace_back(11, 11);
+	m_ghostHouse.emplace_back(11, 12);
 	m_ghostHouse.emplace_back(10, 12);
 	m_ghostHouse.emplace_back(10, 13);
-	m_ghostHouse.emplace_back(11, 12);
 	m_ghostHouse.emplace_back(11, 13);
-	m_ghostHouse.emplace_back(12, 12);
 	m_ghostHouse.emplace_back(12, 13);
+	m_ghostHouse.emplace_back(12, 12);
+	
 
 	m_scatterPath.emplace_back(16, 1);
 	m_scatterPath.emplace_back(17, 1);
@@ -38,12 +38,7 @@ void Blinky::findChaseDirection()
 	goToTarget(m_pacMan->getMapPosition());
 }
 
-void Blinky::beginPlay()
-{
-	restart();
 
-	changeState(GhostState::Scatter);
-}
 
 void Blinky::loadResources(ResourceManager* resourceManager)
 {

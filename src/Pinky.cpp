@@ -7,13 +7,12 @@
 Pinky::Pinky(Game* game, const PacMan* pacMan) :
 	Ghost(game), m_pacMan(pacMan)
 {
-	m_ghostHouse.emplace_back(11, 11);
+	m_ghostHouse.emplace_back(11, 12);
 	m_ghostHouse.emplace_back(10, 12);
 	m_ghostHouse.emplace_back(10, 13);
-	m_ghostHouse.emplace_back(11, 12);
 	m_ghostHouse.emplace_back(11, 13);
-	m_ghostHouse.emplace_back(12, 12);
 	m_ghostHouse.emplace_back(12, 13);
+	m_ghostHouse.emplace_back(12, 12);
 
 
 	m_scatterPath.emplace_back(6, 5);
@@ -40,12 +39,6 @@ void Pinky::findChaseDirection()
 	goToTarget(m_pacMan->getMapPosition() + (m_pacMan->getDirection() * 4));
 }
 
-void Pinky::beginPlay()
-{
-	restart();
-
-	changeState(GhostState::Scatter);
-}
 
 void Pinky::loadResources(ResourceManager* resourceManager)
 {

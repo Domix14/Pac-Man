@@ -26,10 +26,13 @@ enum GameState
 
 struct StateProperties
 {
+	StateProperties(float dur, int first, int last, GameState next, GhostState ghost) :
+		duration(dur), firstLevel(first), lastLevel(last), nextState(next), ghostState(ghost) {}
 	float duration;
 	int firstLevel;
 	int lastLevel;
 	GameState nextState;
+	GhostState ghostState;
 };
 
 class PacManGame : public Game

@@ -8,13 +8,12 @@
 Clyde::Clyde(Game* game, const PacMan* pacMan) :
 	Ghost(game), m_pacMan(pacMan)
 {
-	m_ghostHouse.emplace_back(11, 11);
+	m_ghostHouse.emplace_back(11, 12);
 	m_ghostHouse.emplace_back(10, 12);
 	m_ghostHouse.emplace_back(10, 13);
-	m_ghostHouse.emplace_back(11, 12);
 	m_ghostHouse.emplace_back(11, 13);
-	m_ghostHouse.emplace_back(12, 12);
 	m_ghostHouse.emplace_back(12, 13);
+	m_ghostHouse.emplace_back(12, 12);
 
 	m_scatterPath.emplace_back(6, 23);
 	m_scatterPath.emplace_back(5, 23);
@@ -65,13 +64,6 @@ void Clyde::findChaseDirection()
 	{
 		goToTarget(m_pacMan->getMapPosition());
 	}
-}
-
-void Clyde::beginPlay()
-{
-	restart();
-
-	changeState(GhostState::Scatter);
 }
 
 void Clyde::loadResources(ResourceManager* resourceManager)

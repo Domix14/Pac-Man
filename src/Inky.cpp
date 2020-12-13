@@ -9,13 +9,12 @@
 Inky::Inky(Game* game, const PacMan* pacMan, const Ghost* blinky) :
 	Ghost(game), m_pacMan(pacMan), m_blinky(blinky)
 {
-	m_ghostHouse.emplace_back(11, 11);
+	m_ghostHouse.emplace_back(11, 12);
 	m_ghostHouse.emplace_back(10, 12);
 	m_ghostHouse.emplace_back(10, 13);
-	m_ghostHouse.emplace_back(11, 12);
 	m_ghostHouse.emplace_back(11, 13);
-	m_ghostHouse.emplace_back(12, 12);
 	m_ghostHouse.emplace_back(12, 13);
+	m_ghostHouse.emplace_back(12, 12);
 
 	
 	m_scatterPath.emplace_back(16, 21);
@@ -52,12 +51,6 @@ void Inky::findChaseDirection()
 	goToTarget(m_pacMan->getMapPosition() - direction);
 }
 
-void Inky::beginPlay()
-{
-	restart();
-
-	changeState(GhostState::Chase);
-}
 
 void Inky::loadResources(ResourceManager* resourceManager)
 {
