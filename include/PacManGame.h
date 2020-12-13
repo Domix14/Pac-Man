@@ -12,6 +12,8 @@
 #include "ScoreText.h"
 #include "PowerUp.h"
 
+#include <unordered_map>
+
 enum GameState
 {
 	Exit = -1,

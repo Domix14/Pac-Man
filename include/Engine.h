@@ -9,7 +9,7 @@ class Engine :
     public sf::RenderWindow
 {
 public:
-	Engine(size_t width, size_t height, std::string title);
+	Engine::Engine(class Game* game);
 
 	void start();
 	float getDeltaTime() const;
@@ -26,6 +26,8 @@ public:
 	
 	
 private:
+	class Game* m_game;
+	
 	sf::Clock m_frameClock;
 	bool m_bShowFPS;
 	

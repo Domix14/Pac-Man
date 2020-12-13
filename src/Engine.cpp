@@ -1,22 +1,29 @@
 #include "Engine.h"
+#include "Game.h"
 
-
-Engine::Engine(size_t width, size_t height, std::string title) :
-	sf::RenderWindow(sf::VideoMode(static_cast<unsigned int>(width), static_cast<unsigned int>(height)), title),
+Engine::Engine(Game* game) :
+	m_game(game),
+	sf::RenderWindow(sf::VideoMode(static_cast<unsigned int>(game->getWindowWidth()), static_cast<unsigned int>(game->getWindowHeight())), game->getTitle()),
 	m_frameClock(),
 	m_bShowFPS(false)
 {
+	
 }
 
 void Engine::start()
 {
 	m_resourceManager.loadFont("fps_font", "resources/fonts/fps_font.ttf");
-	resetClock();
+	
 
+	m_game->setEngine(this);
+	m_game->launch();
+	
 	for(auto& entity : m_entities)
 	{
 		entity->beginPlay();
 	}
+
+	resetClock();
 	
 	while(isOpen())
 	{

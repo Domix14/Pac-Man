@@ -1,20 +1,44 @@
 #include "Game.h"
 
+#include "Engine.h"
+
 Game::Game(size_t width, size_t height, const std::string& title) :
-	m_engine(width, height, title)
+	m_windowWidth(width),
+	m_windowHeight(height),
+	m_title(title)
 {
 }
 
 void Game::launch()
 {
-	m_engine.start();
+	
 }
 
 void Game::update(float deltaTime)
 {
 }
 
-const Engine* Game::getEngine() const
+size_t Game::getWindowWidth() const
 {
-	return &m_engine;
+	return m_windowWidth;
+}
+
+size_t Game::getWindowHeight() const
+{
+	return m_windowHeight;
+}
+
+std::string Game::getTitle() const
+{
+	return m_title;
+}
+
+void Game::setEngine(Engine* engine)
+{
+	m_engine = engine;
+}
+
+Engine* Game::getEngine() const
+{
+	return m_engine;
 }

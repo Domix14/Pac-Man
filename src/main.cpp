@@ -1,9 +1,12 @@
 #include "PacManGame.h"
+#include "Engine.h"
 
 int main()
 {
 	PacManGame game;
-	game.launch();
+	Engine engine(&game);
+	engine.start();
+	
 
 	return 0;
 }

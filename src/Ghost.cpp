@@ -33,7 +33,8 @@ Ghost::Ghost(Game* game) :
 	Entity(game),
 	START_POSITION({ 11,12 }),
 	START_DIRECTION({ 0,1 }),
-	m_movementSpeed(80.f)
+	m_movementSpeed(80.f),
+	m_path()
 {
 	m_collisionRect.width = BLOCK_WIDTH;
 	m_collisionRect.height = BLOCK_WIDTH;
@@ -103,7 +104,7 @@ void Ghost::updateDirection()
 	{
 		m_direction = nextMapPosition - m_mapPosition;
 		m_mapPosition = nextMapPosition;
-		m_destination = getMapOffset() + sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH);
+		m_destination = getMapOffset() + sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH);		
 	}
 }
 
@@ -312,7 +313,7 @@ std::vector<sf::Vector2i> Ghost::findAvailableDirections() const
 
 void Ghost::exitGhostHouse()
 {
-	goToTarget(sf::Vector2i(11, 11));
+	goToTarget(sf::Vector2i(11, 10));
 }
 
 void Ghost::restart()

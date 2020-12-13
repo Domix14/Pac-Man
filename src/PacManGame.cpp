@@ -3,7 +3,7 @@
 #include "Map.h"
 #include "Utilities.h"
 
-
+#include "Engine.h"
 
 PacManGame::PacManGame() :
 	Game(WINDOW_WIDTH, WINDOW_HEIGHT, "Pac-Man"),
@@ -26,21 +26,17 @@ PacManGame::~PacManGame()
 
 void PacManGame::launch()
 {
-	m_engine.addEntity(&m_scoreText);
-	m_engine.addEntity(&m_pacMan);
-	m_engine.addEntity(&m_blinky);
-	m_engine.addEntity(&m_pinky);
-	m_engine.addEntity(&m_clyde);
-	m_engine.addEntity(&m_inky);
+	getEngine()->addEntity(&m_scoreText);
+	getEngine()->addEntity(&m_pacMan);
+	getEngine()->addEntity(&m_blinky);
+	getEngine()->addEntity(&m_pinky);
+	getEngine()->addEntity(&m_clyde);
+	getEngine()->addEntity(&m_inky);
 
-	m_engine.addEntity(&m_level);
+	getEngine()->addEntity(&m_level);
 	spawnCoins();
 
-	//m_engine.showFPS(true);
-
-	//m_engine.setFramerateLimit(144);
-	
-	m_engine.start();
+	restartPositions();
 }
 
 void PacManGame::update(float deltaTime)
@@ -69,11 +65,11 @@ void PacManGame::spawnCoins()
 
 	for(auto& coin : m_coins)
 	{
-		m_engine.addEntity(&coin);
+		getEngine()->addEntity(&coin);
 	}
 	for (auto& Power : m_Powers)
 	{
-		m_engine.addEntity(&Power);
+		getEngine()->addEntity(&Power);
 	}
 }
 
@@ -100,6 +96,9 @@ void PacManGame::restartPositions()
 {
 	m_pacMan.restart();
 	m_blinky.restart();
+	m_pinky.restart();
+	m_inky.restart();
+	m_clyde.restart();
 }
 
 void PacManGame::restartGame()
