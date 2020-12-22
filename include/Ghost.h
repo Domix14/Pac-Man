@@ -1,5 +1,6 @@
 #pragma once
 #include "Entity.h"
+#include "Animation.h"
 
 #include <stack>
 #include <array>
@@ -39,6 +40,8 @@ public:
 	sf::Vector2i getMapPosition() const;
 	void updateDirection();
 	void findNextPosition();
+	void setDirection(sf::Vector2i nextDirection);
+	void changeAnimation();
 	void goToPosition(sf::Vector2i position);
 	void goToTarget(sf::Vector2i position);
 	bool findRoute(std::vector<sf::Vector2i> path, std::vector<sf::Vector2i>& finalPath, const sf::Vector2i& destination);
@@ -61,6 +64,8 @@ protected:
 	const sf::Vector2i START_POSITION;
 	const sf::Vector2i START_DIRECTION;
 	
+	Animation m_animation;
+
 	sf::Vector2i m_direction;
 	sf::Vector2i m_mapPosition;
 	sf::Vector2f m_destination;

@@ -54,6 +54,6 @@ void Inky::findChaseDirection()
 
 void Inky::loadResources(ResourceManager* resourceManager)
 {
-	resourceManager->loadTexture("inky", "resources/graphics/inky.png");
+	resourceManager->loadTexture("inky", "resources/graphics/inky_anim.png");
 	m_sprite.setTexture(resourceManager->getTexture("inky"));
 }

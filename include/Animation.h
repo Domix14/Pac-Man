@@ -6,14 +6,16 @@
 class Animation
 {
 public:
+	Animation();
 	void update(float deltaTime, sf::Sprite& sprite);
 	void setFrameTime(float time);
-	void addSprites(const std::string& name, const std::vector<sf::Sprite>& sprites);
+	void addRects(const std::string& name, const std::vector<sf::IntRect>& rects);
+	void setAnimation(const std::string& name, sf::Sprite& sprite);
 private:
 	void nextFrame();
 
 	std::string currentAnimation;
-	std::unordered_map<std::string, std::vector<sf::Sprite>> m_sprites;
+	std::unordered_map<std::string, std::vector<sf::IntRect>> m_textureRects;
 	float m_timer;
 	float m_frameTime;
 	size_t m_frame;

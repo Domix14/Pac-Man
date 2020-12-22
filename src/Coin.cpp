@@ -6,7 +6,7 @@ Coin::Coin(Game* game) :
 	Entity(game)
 {
 	m_bEnableCollision = true;
-	m_bDrawCollisionRect = true;
+	//m_bDrawCollisionRect = true;
 	m_collisionRect.width = 10;
 	m_collisionRect.height = 10;
 }

@@ -42,6 +42,6 @@ void Pinky::findChaseDirection()
 
 void Pinky::loadResources(ResourceManager* resourceManager)
 {
-	resourceManager->loadTexture("pinky", "resources/graphics/pinky.png");
+	resourceManager->loadTexture("pinky", "resources/graphics/pinky_anim.png");
 	m_sprite.setTexture(resourceManager->getTexture("pinky"));
 }

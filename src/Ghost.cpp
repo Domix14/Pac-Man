@@ -39,10 +39,17 @@ Ghost::Ghost(Game* game) :
 	m_collisionRect.width = BLOCK_WIDTH;
 	m_collisionRect.height = BLOCK_WIDTH;
 	m_bEnableCollision = true;
+
+	m_animation.addRects("right", { sf::IntRect(0, 0, 30, 30), sf::IntRect(30, 0, 30, 30) });
+	m_animation.addRects("up", { sf::IntRect(0, 30, 30, 30), sf::IntRect(30, 30, 30, 30) });
+	m_animation.addRects("left", { sf::IntRect(0, 60, 30, 30), sf::IntRect(30, 60, 30, 30) });
+	m_animation.addRects("down", { sf::IntRect(0, 90, 30, 30), sf::IntRect(30, 90, 30, 30) });
+	m_animation.setFrameTime(0.4f);
 }
 
 void Ghost::update(float deltaTime)
 {
+	m_animation.update(deltaTime, m_sprite);
 	const sf::Vector2f nextPosition = getPosition() + (static_cast<sf::Vector2f>(m_direction) * m_movementSpeed * deltaTime);
 	if (length(getPosition() - m_destination) > 2.f)
 	{
@@ -100,12 +107,12 @@ void Ghost::updateDirection()
 	{
 		m_mapPosition = nextMapPosition;
 		m_destination = getMapOffset() + sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH);
-		m_direction = -m_direction;
+		setDirection(-m_direction);
 		setPosition(getMapOffset() + sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH));
 	}
 	else
 	{
-		m_direction = nextMapPosition - m_mapPosition;
+		setDirection(nextMapPosition - m_mapPosition);
 		m_mapPosition = nextMapPosition;
 		m_destination = getMapOffset() + sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH);		
 	}
@@ -181,6 +188,32 @@ void Ghost::findNextPosition()
 			}
 			break;
 		}
+	}
+}
+
+void Ghost::setDirection(sf::Vector2i nextDirection)
+{
+	m_direction = nextDirection;
+	changeAnimation();
+}
+
+void Ghost::changeAnimation()
+{
+	if (m_direction == sf::Vector2i(0, -1))
+	{
+		m_animation.setAnimation("up", m_sprite);
+	}
+	else if (m_direction == sf::Vector2i(1, 0))
+	{
+		m_animation.setAnimation("right", m_sprite);
+	}
+	else if (m_direction == sf::Vector2i(0, 1))
+	{
+		m_animation.setAnimation("down", m_sprite);
+	}
+	else if (m_direction == sf::Vector2i(-1, 0))
+	{
+		m_animation.setAnimation("left", m_sprite);
 	}
 }
 
@@ -331,5 +364,5 @@ void Ghost::restart()
 {
 	m_mapPosition = START_POSITION;
 	setPosition(getMapOffset() + sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH));
-	m_direction = START_DIRECTION;
+	setDirection(START_DIRECTION);
 }

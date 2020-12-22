@@ -2,12 +2,12 @@
 
 #include <SFML/System/Vector2.hpp>
 
-constexpr  size_t WINDOW_WIDTH = 420;
-constexpr size_t WINDOW_HEIGHT = 560;
+constexpr  size_t WINDOW_WIDTH = 630;
+constexpr size_t WINDOW_HEIGHT = 840;
 
-constexpr  size_t MAP_WIDTH = 460;
-constexpr size_t MAP_HEIGHT = 540;
-constexpr float BLOCK_WIDTH = 20.f;
+constexpr  size_t MAP_WIDTH = 690;
+constexpr size_t MAP_HEIGHT = 810;
+constexpr float BLOCK_WIDTH = 30.f;
 
 enum MapType
 {

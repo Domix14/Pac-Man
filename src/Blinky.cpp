@@ -42,6 +42,15 @@ void Blinky::findChaseDirection()
 
 void Blinky::loadResources(ResourceManager* resourceManager)
 {
-	resourceManager->loadTexture("blinky", "resources/graphics/blinky.png");
+	/*resourceManager->loadTexture("blinky", "resources/graphics/blinky.png");
+	m_sprite.setTexture(resourceManager->getTexture("blinky"));*/
+
+	resourceManager->loadTexture("blinky", "resources/graphics/blinky_anim.png");
 	m_sprite.setTexture(resourceManager->getTexture("blinky"));
+
+	/*m_animation.addRects("right", { sf::IntRect(0, 0, 30, 30), sf::IntRect(30, 0, 30, 30) });
+	m_animation.addRects("up", { sf::IntRect(0, 30, 30, 30), sf::IntRect(30, 30, 30, 30) });
+	m_animation.addRects("left", { sf::IntRect(0, 60, 30, 30), sf::IntRect(30, 60, 30, 30) });
+	m_animation.addRects("down", { sf::IntRect(0, 90, 30, 30), sf::IntRect(30, 90, 30, 30) });
+	m_animation.setFrameTime(0.4f);*/
 }

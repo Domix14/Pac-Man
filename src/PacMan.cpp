@@ -16,25 +16,37 @@ PacMan::PacMan(Game* game) :
 	m_bEnableCollision = true;
 	m_collisionRect.width = BLOCK_WIDTH;
 	m_collisionRect.height = BLOCK_WIDTH;
-	m_bDrawCollisionRect = true;
 }
 
 void PacMan::loadResources(ResourceManager* resourceManager)
 {
-	resourceManager->loadTexture("pacman", "resources/graphics/pacman.png");
-	m_sprite.setTexture(resourceManager->getTexture("pacman"));
+	/*resourceManager->loadTexture("pacman", "resources/graphics/pacman.png");
+	m_sprite.setTexture(resourceManager->getTexture("pacman"));*/
+
+	resourceManager->loadTexture("pacman_anim", "resources/graphics/pacman_anim.png");
+	/*m_sprite.setTexture(resourceManager->getTexture("pacman"));
+	m_sprite.setTextureRect(sf::IntRect(0, 0, 30, 30));*/
+	m_sprite.setTexture(resourceManager->getTexture("pacman_anim"));
+
+	m_animation.addRects("right", { sf::IntRect(0, 0, 30, 30), sf::IntRect(30, 0, 30, 30) });
+	m_animation.addRects("up", { sf::IntRect(0, 30, 30, 30), sf::IntRect(30, 30, 30, 30) });
+	m_animation.addRects("left", { sf::IntRect(0, 60, 30, 30), sf::IntRect(30, 60, 30, 30) });
+	m_animation.addRects("down", { sf::IntRect(0, 90, 30, 30), sf::IntRect(30, 90, 30, 30) });
+	m_animation.setFrameTime(0.4f);
+	m_animation.setAnimation("down", m_sprite);
 }
 
 void PacMan::update(float deltaTime)
 {
 	processInput();
+	m_animation.update(deltaTime, m_sprite);
 
 	const auto directionDiff = m_direction + m_nextDirection;
 	if(directionDiff.x == 0 && directionDiff.y == 0)
 	{
 		if(findDestination(m_nextDirection))
 		{
-			m_direction = m_nextDirection;
+			setDirection(m_nextDirection);
 		}
 	}
 	
@@ -48,14 +60,13 @@ void PacMan::update(float deltaTime)
 		setPosition(m_destination);
 		if(findDestination(m_nextDirection))
 		{
-			m_direction = m_nextDirection;
+			setDirection(m_nextDirection);
 		}
 		else
 		{
 			findDestination(m_direction);
 		}
 	}
-	
 }
 
 void PacMan::beginPlay()
@@ -92,6 +103,26 @@ void PacMan::onCollision(Entity* otherEntity)
 	}
 }
 
+void PacMan::changeAnimation()
+{
+	if (m_direction == sf::Vector2i(0, -1))
+	{
+		m_animation.setAnimation("up", m_sprite);
+	}
+	else if (m_direction == sf::Vector2i(1, 0))
+	{
+		m_animation.setAnimation("right", m_sprite);
+	}
+	else if (m_direction == sf::Vector2i(0, 1))
+	{
+		m_animation.setAnimation("down", m_sprite);
+	}
+	else if (m_direction == sf::Vector2i(-1, 0))
+	{
+		m_animation.setAnimation("left", m_sprite);
+	}
+}
+
 void PacMan::processInput()
 {
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::W) && m_nextDirection != sf::Vector2i(0, -1))
@@ -110,6 +141,12 @@ void PacMan::processInput()
 	{
 		m_nextDirection = sf::Vector2i(-1, 0);
 	}
+}
+
+void PacMan::setDirection(sf::Vector2i newDirection)
+{
+	m_direction = newDirection;
+	changeAnimation();
 }
 
 bool PacMan::findDestination(sf::Vector2i direction)
@@ -137,7 +174,7 @@ void PacMan::restart()
 {
 	m_mapPosition = START_POSITION;
 	setPosition(getMapOffset() + sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH));
-	m_direction = START_DIRECTION;
+	setDirection(START_DIRECTION);
 	m_nextDirection = m_direction;
 }
 

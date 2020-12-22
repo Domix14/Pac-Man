@@ -68,6 +68,6 @@ void Clyde::findChaseDirection()
 
 void Clyde::loadResources(ResourceManager* resourceManager)
 {
-	resourceManager->loadTexture("clyde", "resources/graphics/clyde.png");
+	resourceManager->loadTexture("clyde", "resources/graphics/clyde_anim.png");
 	m_sprite.setTexture(resourceManager->getTexture("clyde"));
 }
