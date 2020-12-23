@@ -44,6 +44,7 @@ Ghost::Ghost(Game* game) :
 	m_animation.addRects("up", { sf::IntRect(0, 30, 30, 30), sf::IntRect(30, 30, 30, 30) });
 	m_animation.addRects("left", { sf::IntRect(0, 60, 30, 30), sf::IntRect(30, 60, 30, 30) });
 	m_animation.addRects("down", { sf::IntRect(0, 90, 30, 30), sf::IntRect(30, 90, 30, 30) });
+	m_animation.addRects("frightened", { sf::IntRect(0, 120, 30, 30), sf::IntRect(30, 120, 30, 30) });
 	m_animation.setFrameTime(0.4f);
 }
 
@@ -93,6 +94,14 @@ void Ghost::changeState(GhostState newState)
 
 	m_ghostState = newState;
 	
+	if (m_ghostState == GhostState::Frightened)
+	{
+		m_animation.setAnimation("frightened", m_sprite);
+	}
+	else
+	{
+		changeAnimation();
+	}
 }
 
 sf::Vector2i Ghost::getMapPosition() const
@@ -199,6 +208,8 @@ void Ghost::setDirection(sf::Vector2i nextDirection)
 
 void Ghost::changeAnimation()
 {
+	if (m_ghostState == GhostState::Frightened) return;
+
 	if (m_direction == sf::Vector2i(0, -1))
 	{
 		m_animation.setAnimation("up", m_sprite);
