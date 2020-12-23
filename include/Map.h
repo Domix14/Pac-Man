@@ -20,7 +20,7 @@ enum MapType
 
 static sf::Vector2f getMapOffset()
 {
-	return sf::Vector2f{ -BLOCK_WIDTH, 20.f };
+	return sf::Vector2f{ -BLOCK_WIDTH, BLOCK_WIDTH };
 }
 
 constexpr size_t getMapMaxRowIndex()

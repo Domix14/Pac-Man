@@ -30,6 +30,7 @@ PacManGame::~PacManGame()
 
 void PacManGame::launch()
 {
+	getEngine()->addEntity(&m_level);
 	getEngine()->addEntity(&m_scoreText);
 	getEngine()->addEntity(&m_pacMan);
 	getEngine()->addEntity(&m_blinky);
@@ -37,7 +38,7 @@ void PacManGame::launch()
 	getEngine()->addEntity(&m_clyde);
 	getEngine()->addEntity(&m_inky);
 
-	getEngine()->addEntity(&m_level);
+	
 	spawnCoins();
 
 	restartGame();
