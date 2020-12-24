@@ -51,7 +51,7 @@ void PacMan::update(float deltaTime)
 	}
 	
 	const sf::Vector2f nextPosition = getPosition() + (static_cast<sf::Vector2f>(m_direction) * m_movementSpeed * deltaTime);
-	if (length(getPosition() - m_destination) > 2.f)
+	if (length(nextPosition - m_destination) < length(getPosition() - m_destination))
 	{
 		setPosition(nextPosition);
 	}
