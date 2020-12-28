@@ -11,6 +11,7 @@
 #include "Inky.h"
 #include "ScoreText.h"
 #include "PowerUp.h"
+#include "Menu.h"
 
 #include <unordered_map>
 
@@ -43,7 +44,10 @@ public:
 	void launch() override;
 	void update(float deltaTime) override;
 	
-
+	void exit();
+	void openMenu();
+	void closeGame();
+	void startGame();
 	void spawnCoins();
 	void addScore(size_t score);
 	void killPacMan();
@@ -57,13 +61,15 @@ private:
 	int m_currentLevel;
 	float m_stateTimer;
 	
+	Menu m_menu;
+
 	PacMan m_pacMan;
 	Blinky m_blinky;
 	Clyde m_clyde;
 	Pinky m_pinky;
 	Inky m_inky;
 	std::vector<Coin> m_coins;
-	std::vector<PowerUp> m_Powers;
+	std::vector<PowerUp> m_powers;
 	Level m_level;
 	ScoreText m_scoreText;
 	

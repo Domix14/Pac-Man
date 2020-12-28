@@ -22,6 +22,7 @@ set(HEADERS
     include/Inky.h
     include/PowerUp.h
     include/Animation.h
+    include/Menu.h
     include/Utilities.h)
 
 set(SOURCE
@@ -41,6 +42,7 @@ set(SOURCE
   src/Inky.cpp
   src/PowerUp.cpp
   src/Animation.cpp
+  src/Menu.cpp
   src/Pinky.cpp)
 
 include_directories(

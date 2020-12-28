@@ -62,10 +62,12 @@ bool Entity::isAlive() const
 
 void Entity::destroy()
 {
-	m_bDraw = false;
-	m_bEnableCollision = false;
-	m_bDrawCollisionRect = false;
 	m_bAlive = false;
+}
+
+void Entity::reset()
+{
+	m_bAlive = true;
 }
 
 Game* Entity::getGame() const

@@ -8,6 +8,7 @@
 PacManGame::PacManGame() :
 	Game(WINDOW_WIDTH, WINDOW_HEIGHT, "Pac-Man"),
 	m_currentLevel(0),
+	m_menu(this),
 	m_pacMan(this),
 	m_blinky(this, &m_pacMan),
 	m_pinky(this, &m_pacMan),
@@ -30,6 +31,49 @@ PacManGame::~PacManGame()
 
 void PacManGame::launch()
 {
+	openMenu();
+}
+
+void PacManGame::update(float deltaTime)
+{
+	updateState(deltaTime);
+}
+
+void PacManGame::exit()
+{
+	getEngine()->close();
+}
+
+void PacManGame::openMenu()
+{
+	getEngine()->addEntity(&m_menu);
+}
+
+void PacManGame::closeGame()
+{
+	m_level.destroy();
+	m_blinky.destroy();
+	m_scoreText.destroy();
+	m_pacMan.destroy();
+	m_pinky.destroy();
+	m_clyde.destroy();
+	m_inky.destroy();
+
+	for (auto& c : m_coins)
+	{
+		c.destroy();
+	}
+
+	for (auto& p : m_powers)
+	{
+		p.destroy();
+	}
+}
+
+void PacManGame::startGame()
+{
+	m_menu.destroy();
+
 	getEngine()->addEntity(&m_level);
 	getEngine()->addEntity(&m_scoreText);
 	getEngine()->addEntity(&m_pacMan);
@@ -37,16 +81,9 @@ void PacManGame::launch()
 	getEngine()->addEntity(&m_pinky);
 	getEngine()->addEntity(&m_clyde);
 	getEngine()->addEntity(&m_inky);
-
-	
 	spawnCoins();
 
 	restartGame();
-}
-
-void PacManGame::update(float deltaTime)
-{
-	updateState(deltaTime);
 }
 
 void PacManGame::spawnCoins()
@@ -63,8 +100,8 @@ void PacManGame::spawnCoins()
 			}
 			else if(map[y][x] == MapType::PowerUpPosition)
 			{
-				m_Powers.emplace_back(this);
-				m_Powers.back().setPosition(getMapOffset() + sf::Vector2f(x * BLOCK_WIDTH, y * BLOCK_WIDTH));
+				m_powers.emplace_back(this);
+				m_powers.back().setPosition(getMapOffset() + sf::Vector2f(x * BLOCK_WIDTH, y * BLOCK_WIDTH));
 			}
 		}
 	}
@@ -73,7 +110,7 @@ void PacManGame::spawnCoins()
 	{
 		getEngine()->addEntity(&coin);
 	}
-	for (auto& Power : m_Powers)
+	for (auto& Power : m_powers)
 	{
 		getEngine()->addEntity(&Power);
 	}

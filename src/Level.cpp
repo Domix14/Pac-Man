@@ -6,6 +6,7 @@
 Level::Level(Game* game) :
 	Entity(game)
 {
+	m_sprite.setPosition(sf::Vector2f(0.f, BLOCK_WIDTH));
 }
 
 void Level::update(float deltaTime)
@@ -14,7 +15,7 @@ void Level::update(float deltaTime)
 
 void Level::beginPlay()
 {
-	m_sprite.setPosition(sf::Vector2f(0.f, BLOCK_WIDTH));
+	
 }
 
 void Level::loadResources(ResourceManager* resourceManager)

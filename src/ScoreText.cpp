@@ -11,8 +11,8 @@ ScoreText::ScoreText(Game* game) :
 
 void ScoreText::loadResources(ResourceManager* resourceManager)
 {
-	resourceManager->loadFont("score_font", "resources/fonts/score_font.otf");
-	m_scoreText.setFont(resourceManager->getFont("score_font"));
+	resourceManager->loadFont("font", "resources/fonts/font.otf");
+	m_scoreText.setFont(resourceManager->getFont("font"));
 }
 
 void ScoreText::update(float deltaTime)

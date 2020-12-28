@@ -11,7 +11,7 @@ PacMan::PacMan(Game* game) :
 	Entity(game),
 	START_POSITION({2,1}),
 	START_DIRECTION({ 0,1 }),
-	m_movementSpeed(60.f)
+	m_movementSpeed(80.f)
 {
 	m_bEnableCollision = true;
 	m_collisionRect.width = BLOCK_WIDTH;
@@ -140,6 +140,16 @@ void PacMan::processInput()
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && m_nextDirection != sf::Vector2i(-1, 0))
 	{
 		m_nextDirection = sf::Vector2i(-1, 0);
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+	{
+		auto game = dynamic_cast<PacManGame*>(getGame());
+		if (game)
+		{
+			game->openMenu();
+			game->closeGame();
+		}
 	}
 }
 

@@ -2,7 +2,12 @@
 
 #include <SFML/Graphics.hpp>
 
-
+enum CollisionChannel
+{
+	Player = 1,
+	Enemy = 2,
+	World = 3,
+};
 
 class Entity : public sf::Drawable
 {
@@ -22,6 +27,7 @@ public:
 	sf::FloatRect getCollisionRect() const;
 	bool isAlive() const;
 	void destroy();
+	void reset();
 protected:
 	class Game* getGame() const;
 

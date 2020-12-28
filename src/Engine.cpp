@@ -58,9 +58,11 @@ void Engine::start()
 	}
 }
 
+
+
 float Engine::resetClock()
 {
-	return m_frameClock.restart().asMilliseconds() / 1000.f;
+	return m_frameClock.restart().asSeconds();
 }
 
 float Engine::getFPS(float deltaTime) const
@@ -77,7 +79,9 @@ float Engine::getDeltaTime() const
 
 void Engine::addEntity(Entity* entity)
 {
+	entity->reset();
 	entity->loadResources(&m_resourceManager);
+	entity->beginPlay();
 	m_entities.push_back(entity);
 }
 
@@ -85,7 +89,10 @@ void Engine::updateEntities(float deltaTime)
 {
 	for(auto& entity : m_entities)
 	{
-		entity->update(deltaTime);
+		if (entity->isAlive())
+		{
+			entity->update(deltaTime);
+		}
 	}
 }
 
@@ -93,7 +100,10 @@ void Engine::drawEntities()
 {
 	for (auto& entity : m_entities)
 	{
-		draw(*entity);
+		if (entity->isAlive())
+		{
+			draw(*entity);
+		}
 	}
 }
 
