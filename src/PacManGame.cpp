@@ -18,10 +18,9 @@ PacManGame::PacManGame() :
 	m_scoreText(this),
 	m_score(0)
 {
-	m_statesProperties[NewGame].emplace_back(2.f, 0, 1, GameState::Scatter, GhostState::GhostHouse);
+	m_statesProperties[NewGame].emplace_back(0.f, 0, 1, GameState::Scatter, GhostState::Scatter);
 	m_statesProperties[Scatter].emplace_back(10.f, 0, 1, GameState::Chase, GhostState::Scatter);
-	m_statesProperties[Chase].emplace_back(10.f, 0, 1, GameState::Scatter, GhostState::Chase);
-	m_statesProperties[Frightened].emplace_back(10.f, 0, 1, GameState::Scatter, GhostState::Frightened);
+	m_statesProperties[Chase].emplace_back(20.f, 0, 1, GameState::Scatter, GhostState::Chase);
 }
 
 PacManGame::~PacManGame()
@@ -83,7 +82,7 @@ void PacManGame::startGame()
 	getEngine()->addEntity(&m_inky);
 	spawnCoins();
 
-	restartGame();
+	resetGame();
 }
 
 void PacManGame::spawnCoins()
@@ -110,6 +109,7 @@ void PacManGame::spawnCoins()
 	{
 		getEngine()->addEntity(&coin);
 	}
+
 	for (auto& Power : m_powers)
 	{
 		getEngine()->addEntity(&Power);
@@ -127,15 +127,15 @@ void PacManGame::killPacMan()
 	m_lives--;
 	if(m_lives < 0)
 	{
-		//TODO: Restart whole game
+		resetGame();
 	}
 	else
 	{
-		restartPositions();
+		resetPositions();
 	}
 }
 
-void PacManGame::restartPositions()
+void PacManGame::resetPositions()
 {
 	m_pacMan.restart();
 	m_blinky.restart();
@@ -144,10 +144,17 @@ void PacManGame::restartPositions()
 	m_clyde.restart();
 }
 
-void PacManGame::restartGame()
+void PacManGame::resetGame()
 {
-	restartPositions();
+	m_lives = 4;
+	resetLevel();
 	changeState(GameState::NewGame);
+}
+
+void PacManGame::resetLevel()
+{
+	resetPositions();
+	m_coinCount = 100;
 }
 
 void PacManGame::changeState(GameState state)
@@ -159,10 +166,10 @@ void PacManGame::changeState(GameState state)
 		{
 			m_state = state;
 			m_stateTimer = p.duration;
-			m_blinky.changeState(p.ghostState);
-			m_pinky.changeState(p.ghostState);
-			m_inky.changeState(p.ghostState);
-			m_clyde.changeState(p.ghostState);
+			m_blinky.changeGlobalState(p.ghostState);
+			m_pinky.changeGlobalState(p.ghostState);
+			m_inky.changeGlobalState(p.ghostState);
+			m_clyde.changeGlobalState(p.ghostState);
 		}
 	}
 }
@@ -181,4 +188,23 @@ void PacManGame::updateState(float deltaTime)
 			}
 		}
 	}
+}
+
+void PacManGame::pickCoin()
+{
+	addScore(10);
+	m_coinCount--;
+	if(m_coinCount == 0)
+	{
+		resetLevel();
+	}
+}
+
+void PacManGame::pickPowerUp()
+{
+	addScore(10);
+	m_blinky.changeState(GhostState::Frightened);
+	m_pinky.changeState(GhostState::Frightened);
+	m_inky.changeState(GhostState::Frightened);
+	m_clyde.changeState(GhostState::Frightened);
 }

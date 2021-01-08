@@ -1,5 +1,6 @@
 #include "Animation.h"
 
+#include "Utilities.h"
 Animation::Animation() :
 	m_timer(0.f),
 	m_frameTime(0.f),

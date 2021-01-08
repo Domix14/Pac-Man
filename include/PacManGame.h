@@ -51,10 +51,13 @@ public:
 	void spawnCoins();
 	void addScore(size_t score);
 	void killPacMan();
-	void restartPositions();
-	void restartGame();
+	void resetPositions();
+	void resetGame();
+	void resetLevel();
 	void changeState(GameState state);
 	void updateState(float deltaTime);
+	void pickCoin();
+	void pickPowerUp();
 private:
 	GameState m_state;
 	std::unordered_map<GameState, std::vector<StateProperties>> m_statesProperties;
@@ -75,5 +78,6 @@ private:
 	
 	size_t m_score;
 	int m_lives;
+	int m_coinCount;
 };
 

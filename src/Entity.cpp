@@ -5,7 +5,8 @@ Entity::Entity(Game* game) :
 	m_bAlive(true),
 	m_bDraw(true),
 	m_bEnableCollision(false),
-	m_bDrawCollisionRect(false)
+	m_bDrawCollisionRect(false),
+	m_bMovable(false)
 {
 }
 
@@ -41,8 +42,8 @@ sf::Vector2f Entity::getPosition() const
 void Entity::setPosition(sf::Vector2f position)
 {
 	m_sprite.setPosition(position);
-	m_collisionRect.left = position.x;
-	m_collisionRect.top = position.y;
+	m_collisionRect.left = position.x + m_collisionRectOffset.x;
+	m_collisionRect.top = position.y + m_collisionRectOffset.y;
 }
 
 bool Entity::isCollisionEnabled()
@@ -58,6 +59,11 @@ sf::FloatRect Entity::getCollisionRect() const
 bool Entity::isAlive() const
 {
 	return m_bAlive;
+}
+
+bool Entity::isMovable() const
+{
+	return m_bMovable;
 }
 
 void Entity::destroy()

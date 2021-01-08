@@ -9,13 +9,15 @@
 
 PacMan::PacMan(Game* game) :
 	Entity(game),
-	START_POSITION({2,1}),
-	START_DIRECTION({ 0,1 }),
+	START_POSITION({11,20}),
+	START_DIRECTION({ 0,-1 }),
 	m_movementSpeed(80.f)
 {
+	m_bMovable = true;
 	m_bEnableCollision = true;
-	m_collisionRect.width = BLOCK_WIDTH;
-	m_collisionRect.height = BLOCK_WIDTH;
+	m_collisionRect.width = 15;
+	m_collisionRect.height = 15;
+	m_collisionRectOffset = { 7.5f, 7.5f };
 }
 
 void PacMan::loadResources(ResourceManager* resourceManager)
@@ -71,8 +73,7 @@ void PacMan::update(float deltaTime)
 
 void PacMan::beginPlay()
 {
-	restart();
-	findDestination(m_direction);
+	restart(); 
 }
 
 void PacMan::onCollision(Entity* otherEntity)
@@ -84,7 +85,7 @@ void PacMan::onCollision(Entity* otherEntity)
 		auto* game = dynamic_cast<PacManGame*>(getGame());
 		if (game)
 		{
-			game->addScore(10);
+			game->pickCoin();
 		}
 	}
 	else
@@ -96,8 +97,7 @@ void PacMan::onCollision(Entity* otherEntity)
 			auto* game = dynamic_cast<PacManGame*>(getGame());
 			if (game)
 			{
-				game->addScore(100);
-				game->changeState(GameState::Frightened);
+				game->pickPowerUp();
 			}
 		}
 	}
@@ -170,7 +170,7 @@ bool PacMan::findDestination(sf::Vector2i direction)
 	
 	const auto tilePosition = m_mapPosition + direction;
 	
-	if(map[tilePosition.y][tilePosition.x] <= MapType::Teleport)
+	if(map[tilePosition.y][tilePosition.x] <= MapType::SlowDown)
 	{
 		m_mapPosition = tilePosition;
 		m_destination = getMapOffset() + sf::Vector2f(tilePosition.x * BLOCK_WIDTH, tilePosition.y * BLOCK_WIDTH);
@@ -186,6 +186,7 @@ void PacMan::restart()
 	setPosition(getMapOffset() + sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH));
 	setDirection(START_DIRECTION);
 	m_nextDirection = m_direction;
+	m_destination = getPosition();
 }
 
 sf::Vector2i PacMan::getMapPosition() const

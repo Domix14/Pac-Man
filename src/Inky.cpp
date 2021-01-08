@@ -9,14 +9,9 @@
 Inky::Inky(Game* game, const PacMan* pacMan, const Ghost* blinky) :
 	Ghost(game), m_pacMan(pacMan), m_blinky(blinky)
 {
-	m_ghostHouse.emplace_back(11, 12);
 	m_ghostHouse.emplace_back(10, 12);
 	m_ghostHouse.emplace_back(10, 13);
-	m_ghostHouse.emplace_back(11, 13);
-	m_ghostHouse.emplace_back(12, 13);
-	m_ghostHouse.emplace_back(12, 12);
 
-	
 	m_scatterPath.emplace_back(16, 21);
 	m_scatterPath.emplace_back(16, 22);
 	m_scatterPath.emplace_back(16, 23);
@@ -43,6 +38,11 @@ Inky::Inky(Game* game, const PacMan* pacMan, const Ghost* blinky) :
 	m_scatterPath.emplace_back(14, 20);
 	m_scatterPath.emplace_back(15, 20);
 	m_scatterPath.emplace_back(16, 20);
+
+	m_stateProperties[GhostState::GhostHouse] = GhostStateProperties(10.f, GhostState::ExitGhostHouse);
+	m_stateProperties[GhostState::Eaten] = GhostStateProperties(20.f, GhostState::ExitGhostHouse);
+	m_stateProperties[GhostState::ExitGhostHouse] = GhostStateProperties(20.f, GhostState::GlobalState);
+	m_stateProperties[GhostState::Frightened] = GhostStateProperties(10.f, GhostState::GlobalState);
 }
 
 void Inky::findChaseDirection()

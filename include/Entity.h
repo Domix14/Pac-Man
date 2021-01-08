@@ -26,6 +26,7 @@ public:
 	bool isCollisionEnabled();
 	sf::FloatRect getCollisionRect() const;
 	bool isAlive() const;
+	bool isMovable() const;
 	void destroy();
 	void reset();
 protected:
@@ -38,6 +39,9 @@ protected:
 
 	bool m_bEnableCollision;
 	bool m_bDrawCollisionRect;
+	bool m_bMovable;
+
+	sf::Vector2f m_collisionRectOffset;
 	sf::FloatRect m_collisionRect;
 private:
 	class Game* m_game;

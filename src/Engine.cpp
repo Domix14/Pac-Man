@@ -109,19 +109,18 @@ void Engine::drawEntities()
 
 void Engine::checkEntitiesCollisions()
 {
-	//TODO: Rename iterators
-	for(auto it = m_entities.begin();it != m_entities.end();++it)
+	for(auto movableEntity = m_entities.begin(); movableEntity != m_entities.end();++movableEntity)
 	{
-		if((*it)->isCollisionEnabled())
+		if((*movableEntity)->isCollisionEnabled() && (*movableEntity)->isMovable())
 		{
-			for(auto it2 = (it + 1);it2 != m_entities.end();++it2)
+			for(auto otherEntity = m_entities.begin(); otherEntity != m_entities.end();++otherEntity)
 			{
-				if((*it2)->isCollisionEnabled())
+				if((*otherEntity)->isCollisionEnabled() && otherEntity != movableEntity)
 				{
-					if ((*it)->getCollisionRect().intersects((*it2)->getCollisionRect()))
+					if ((*otherEntity)->getCollisionRect().intersects((*movableEntity)->getCollisionRect()))
 					{
-						(*it)->onCollision(*it2);
-						(*it2)->onCollision(*it);
+						(*movableEntity)->onCollision(*otherEntity);
+						(*otherEntity)->onCollision(*movableEntity);
 					}
 				}
 			}

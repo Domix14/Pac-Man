@@ -8,11 +8,7 @@ Blinky::Blinky(Game* game, const PacMan* pacMan) :
 	Ghost(game), m_pacMan(pacMan)
 {
 	m_ghostHouse.emplace_back(11, 12);
-	m_ghostHouse.emplace_back(10, 12);
-	m_ghostHouse.emplace_back(10, 13);
 	m_ghostHouse.emplace_back(11, 13);
-	m_ghostHouse.emplace_back(12, 13);
-	m_ghostHouse.emplace_back(12, 12);
 	
 
 	m_scatterPath.emplace_back(16, 1);
@@ -31,6 +27,11 @@ Blinky::Blinky(Game* game, const PacMan* pacMan) :
 	m_scatterPath.emplace_back(16, 4);
 	m_scatterPath.emplace_back(16, 3);
 	m_scatterPath.emplace_back(16, 2);
+
+	m_stateProperties[GhostState::GhostHouse] = GhostStateProperties(0.f, GhostState::ExitGhostHouse);
+	m_stateProperties[GhostState::Eaten] = GhostStateProperties(20.f, GhostState::ExitGhostHouse);
+	m_stateProperties[GhostState::ExitGhostHouse] = GhostStateProperties(20.f, GhostState::GlobalState);
+	m_stateProperties[GhostState::Frightened] = GhostStateProperties(10.f, GhostState::GlobalState);
 }
 
 void Blinky::findChaseDirection()

@@ -19,7 +19,7 @@ sf::Vector2i Path::getNextMapPosition()
 
 void Path::addPosition(sf::Vector2i position)
 {
-	if (!Ghost::checkPosition(position)) return;
+	//if (!Ghost::checkPosition(position)) return;
 
 	mapPositions.push_back(position);
 	if(map[position.y][position.x] == MapType::Teleport)
@@ -33,11 +33,14 @@ Ghost::Ghost(Game* game) :
 	Entity(game),
 	START_POSITION({ 11,12 }),
 	START_DIRECTION({ 0,1 }),
-	m_movementSpeed(80.f),
+	MOVEMENT_SPEED(80.f),
+	FAST_MOVEMENT_SPEED(400.f),
+	SLOW_MOVEMENT_SPEED(40.f),
 	m_path()
 {
-	m_collisionRect.width = BLOCK_WIDTH;
-	m_collisionRect.height = BLOCK_WIDTH;
+	m_collisionRect.width = 15;
+	m_collisionRect.height = 15;
+	m_collisionRectOffset = { 7.5f, 7.5f };
 	m_bEnableCollision = true;
 
 	m_animation.addRects("right", { sf::IntRect(0, 0, 30, 30), sf::IntRect(30, 0, 30, 30) });
@@ -50,6 +53,7 @@ Ghost::Ghost(Game* game) :
 
 void Ghost::update(float deltaTime)
 {
+	updateStateTimer(deltaTime);
 	m_animation.update(deltaTime, m_sprite);
 	const sf::Vector2f nextPosition = getPosition() + (static_cast<sf::Vector2f>(m_direction) * m_movementSpeed * deltaTime);
 	if (length(nextPosition - m_destination) < length(getPosition() - m_destination))
@@ -73,12 +77,12 @@ void Ghost::update(float deltaTime)
 
 void Ghost::beginPlay()
 {
-	findNextPosition();
+	//findNextPosition();
 }
 
 void Ghost::onCollision(Entity* otherEntity)
 {
-	auto pacMan = dynamic_cast<PacMan*>(otherEntity);
+	const auto pacMan = dynamic_cast<PacMan*>(otherEntity);
 	if(pacMan)
 	{
 		if(m_ghostState == GhostState::Frightened)
@@ -88,20 +92,48 @@ void Ghost::onCollision(Entity* otherEntity)
 	}
 }
 
+void Ghost::changeGlobalState(GhostState newState)
+{
+	m_globalGhostState = newState;
+}
+
 void Ghost::changeState(GhostState newState)
 {
 	if (m_ghostState == newState) return;
 
 	m_ghostState = newState;
+	m_stateTimer = m_stateProperties[m_ghostState].duration;
+
+	if (m_ghostState == GhostState::GlobalState && map[m_mapPosition.y][m_mapPosition.x] == MapType::GhostHouse)
+	{
+		changeState(GhostState::ExitGhostHouse);
+	}
 	
-	if (m_ghostState == GhostState::Frightened)
+	switch(m_ghostState)
 	{
-		m_animation.setAnimation("frightened", m_sprite);
+	case GhostState::Frightened:
+		{
+			m_animation.setAnimation("frightened", m_sprite);
+			break;
+		}
+	case GhostState::Eaten:
+		{
+			m_movementSpeed = FAST_MOVEMENT_SPEED;
+			//m_animation.setAnimation("frightened", m_sprite);
+			break;
+		}
+	case GhostState::GhostHouse:
+		{
+			m_movementSpeed = MOVEMENT_SPEED;
+			break;
+		}
+	default:
+		{
+			changeAnimation();
+		}
 	}
-	else
-	{
-		changeAnimation();
-	}
+	
+	
 }
 
 sf::Vector2i Ghost::getMapPosition() const
@@ -125,17 +157,26 @@ void Ghost::updateDirection()
 		m_mapPosition = nextMapPosition;
 		m_destination = getMapOffset() + sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH);		
 	}
+
+	if(map[m_mapPosition.y][m_mapPosition.x] == MapType::SlowDown || map[m_mapPosition.y][m_mapPosition.x] == MapType::Teleport)
+	{
+		m_movementSpeed = SLOW_MOVEMENT_SPEED;
+	}
+	else if (m_ghostState != GhostState::Eaten)
+	{
+		m_movementSpeed = MOVEMENT_SPEED;
+	}
 }
 
 void Ghost::findNextPosition()
 {
-	if (m_ghostState != GhostState::GhostHouse && map[m_mapPosition.y][m_mapPosition.x] == MapType::GhostHouse)
+	GhostState state = m_ghostState;
+	if(m_ghostState == GhostState::GlobalState)
 	{
-		exitGhostHouse();
-		return;
+		state = m_globalGhostState;
 	}
 	
-	switch(m_ghostState)
+	switch(state)
 	{
 		case GhostState::Scatter:
 		{
@@ -178,22 +219,36 @@ void Ghost::findNextPosition()
 			}
 			else
 			{
-				changeState(GhostState::Scatter);
+				changeState(GhostState::GhostHouse);
 			}
 			break;
 		}
 
 		case GhostState::GhostHouse:
 		{
-			if (m_mapPosition != m_ghostHouse[0])
+			if (m_mapPosition != m_ghostHouse[0] && m_mapPosition != m_ghostHouse[1])
 			{
 				goToTarget(m_ghostHouse[0]);
 			}
+			else if (m_mapPosition == m_ghostHouse[0])
+			{
+				goToTarget(m_ghostHouse[1]);
+			}
+			else if(m_mapPosition == m_ghostHouse[1])
+			{
+				goToTarget(m_ghostHouse[0]);
+			}
+			break;
+		}
+		case GhostState::ExitGhostHouse:
+		{
+			if (map[m_mapPosition.y][m_mapPosition.x] == MapType::GhostHouse)
+			{
+				goToTarget(sf::Vector2i(11, 10));
+			}
 			else
 			{
-				m_path.mapPositions = m_ghostHouse;
-				m_path.positionIndex = 0;
-				updateDirection();
+				changeState(GhostState::GlobalState);
 			}
 			break;
 		}
@@ -228,20 +283,6 @@ void Ghost::changeAnimation()
 	}
 }
 
-void Ghost::goToPosition(sf::Vector2i position)
-{
-	m_path.mapPositions.clear();
-	m_path.positionIndex = 0;
-	if(length(static_cast<sf::Vector2f>(m_mapPosition - position)) <= 1.0f)
-	{
-		m_path.addPosition(position);
-		updateDirection();
-	}
-	else if(findRoute(std::vector<sf::Vector2i>{m_mapPosition}, m_path.mapPositions, position))
-	{
-		updateDirection();
-	}
-}
 
 void Ghost::goToTarget(sf::Vector2i position)
 {
@@ -273,56 +314,7 @@ void Ghost::goToTarget(sf::Vector2i position)
 	updateDirection();
 }
 
-bool Ghost::findRoute(std::vector<sf::Vector2i> path, std::vector<sf::Vector2i>& finalPath, const sf::Vector2i& destination)
-{
-	if (path.empty()) return false;
-
-	auto addPath = [](sf::Vector2i pos, std::vector<sf::Vector2i> path) {path.push_back(pos); return path; };
-	
-	sf::Vector2i tilePosition = path.back() + sf::Vector2i(0, -1);
-	if (checkPosition(tilePosition) && std::find(path.begin(), path.end(), tilePosition) == path.end())
-	{
-		if (tilePosition == destination || findRoute(addPath(tilePosition, path), finalPath, destination))
-		{
-			finalPath.insert(finalPath.begin(), tilePosition);
-			return true;
-		}
-	}
-
-	tilePosition = path.back() + sf::Vector2i(1, 0);
-	if (checkPosition(tilePosition) && std::find(path.begin(), path.end(), tilePosition) == path.end())
-	{
-		if (tilePosition == destination || findRoute(addPath(tilePosition, path), finalPath, destination))
-		{
-			finalPath.insert(finalPath.begin(), tilePosition);
-			return true;
-		}
-	}
-	
-	tilePosition = path.back() + sf::Vector2i(0, 1);
-	if (checkPosition(tilePosition) && std::find(path.begin(), path.end(), tilePosition) == path.end())
-	{
-		if (tilePosition == destination || findRoute(addPath(tilePosition, path), finalPath, destination))
-		{
-			finalPath.insert(finalPath.begin(), tilePosition);
-			return true;
-		}
-	}
-
-	tilePosition = path.back() + sf::Vector2i(-1, 0);
-	if (checkPosition(tilePosition) && std::find(path.begin(), path.end(), tilePosition) == path.end())
-	{
-		if (tilePosition == destination || findRoute(addPath(tilePosition, path), finalPath, destination))
-		{
-			finalPath.insert(finalPath.begin(), tilePosition);
-			return true;
-		}
-	}
-	
-	return false;
-}
-
-bool Ghost::checkPosition(sf::Vector2i position)
+bool Ghost::checkPosition(sf::Vector2i position) const
 {
 	if (position.x < 0 ||
 		position.y < 0 ||
@@ -331,8 +323,11 @@ bool Ghost::checkPosition(sf::Vector2i position)
 	{
 		return false;
 	}
+
 	
-	if(map[position.y][position.x] <= MapType::GhostHouse)
+	if(map[position.y][position.x] <= MapType::GhostHouse &&
+		(m_ghostState == GhostState::GhostHouse || m_ghostState == GhostState::ExitGhostHouse || m_ghostState == GhostState::Eaten)
+		|| map[position.y][position.x] <= MapType::SlowDown)
 	{
 		return true;
 	}
@@ -359,7 +354,7 @@ std::vector<sf::Vector2i> Ghost::findAvailableDirections() const
 			++it;
 		}
 	}
-	if(availableDirections.empty())
+	if(availableDirections.empty() || map[m_mapPosition.y][m_mapPosition.x] == MapType::GhostHouse)
 	{
 		availableDirections.push_back(-m_direction);
 	}
@@ -371,9 +366,22 @@ void Ghost::exitGhostHouse()
 	goToTarget(sf::Vector2i(11, 11));
 }
 
+void Ghost::updateStateTimer(float deltaTime)
+{
+	if (m_ghostState == GhostState::GlobalState) return;
+	
+	m_stateTimer -= deltaTime;
+	if(m_stateTimer <= 0.f)
+	{
+		changeState(m_stateProperties[m_ghostState].nextState);
+	}
+}
+
 void Ghost::restart()
 {
-	m_mapPosition = START_POSITION;
+	changeState(GhostState::GhostHouse);
+	m_mapPosition = m_ghostHouse[0];
 	setPosition(getMapOffset() + sf::Vector2f(m_mapPosition.x * BLOCK_WIDTH, m_mapPosition.y * BLOCK_WIDTH));
-	setDirection(START_DIRECTION);
+	setDirection(sf::Vector2i(0,1));
+	goToTarget(m_ghostHouse[1]);
 }
