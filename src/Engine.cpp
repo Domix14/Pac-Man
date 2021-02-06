@@ -27,7 +27,6 @@ void Engine::start()
 	
 	while(isOpen())
 	{
-		//TODO: Rework?
 		sf::Event event;
 		if(pollEvent(event))
 		{
@@ -79,7 +78,7 @@ float Engine::getDeltaTime() const
 
 void Engine::addEntity(Entity* entity)
 {
-	entity->reset();
+	entity->setAlive();
 	entity->loadResources(&m_resourceManager);
 	entity->beginPlay();
 	m_entities.push_back(entity);

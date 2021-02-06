@@ -16,15 +16,3 @@ void Coin::loadResources(ResourceManager* resourceManager)
 	resourceManager->loadTexture("coin", "resources/graphics/coin.png");
 	m_sprite.setTexture(resourceManager->getTexture("coin"));
 }
-
-void Coin::update(float deltaTime)
-{
-}
-
-void Coin::beginPlay()
-{
-}
-
-void Coin::onCollision(Entity* otherEntity)
-{
-}

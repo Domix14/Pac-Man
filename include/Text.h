@@ -1,16 +1,16 @@
 #pragma once
 #include "Entity.h"
-class ScoreText :
-	public Entity
+class Text :
+    public Entity
 {
 public:
-	ScoreText(class Game* game);
+	Text(Game* game, unsigned fontSize, sf::Vector2f position);
 	
 	void loadResources(ResourceManager* resourceManager) override;
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-	void updateScore(size_t newScore);
-protected:
-	sf::Text m_scoreText;
+	void setText(const std::string& newText);
+private:
+	sf::Text m_text;
 };
 

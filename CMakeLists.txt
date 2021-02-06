@@ -16,6 +16,7 @@ set(HEADERS
     include/Coin.h
     include/Ghost.h
     include/ScoreText.h
+    include/Text.h
     include/Blinky.h
     include/Pinky.h
     include/Clyde.h
@@ -37,6 +38,7 @@ set(SOURCE
   src/Coin.cpp
   src/Ghost.cpp
   src/ScoreText.cpp
+  src/Text.cpp
   src/Blinky.cpp
   src/Clyde.cpp
   src/Inky.cpp

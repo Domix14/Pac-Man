@@ -9,15 +9,6 @@ Game::Game(size_t width, size_t height, const std::string& title) :
 {
 }
 
-void Game::launch()
-{
-	
-}
-
-void Game::update(float deltaTime)
-{
-}
-
 size_t Game::getWindowWidth() const
 {
 	return m_windowWidth;

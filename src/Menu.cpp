@@ -3,6 +3,7 @@
 #include "Map.h"
 #include "PacManGame.h"
 
+#include <fstream>
 
 Menu::Menu(Game* game) :
 	Entity(game),
@@ -10,7 +11,10 @@ Menu::Menu(Game* game) :
 	m_keyPressed(false)
 {
 	m_logoSprite.setPosition(sf::Vector2f(140.f, 100.f));
-
+	m_bestScoreText.setCharacterSize(40);
+	m_bestScoreText.setPosition(sf::Vector2f(220.f, 350.f));
+	m_bestScoreText.setString("Best score: 0");
+	
 	m_menuTexts[0].setPosition(sf::Vector2f(250.f, 500.f));
 	m_menuTexts[0].setString("Start");
 	m_menuTexts[0].setCharacterSize(70);
@@ -58,10 +62,6 @@ void Menu::update(float deltaTime)
 	}
 }
 
-void Menu::beginPlay()
-{
-}
-
 void Menu::loadResources(ResourceManager* resourceManager)
 {
 	resourceManager->loadTexture("logo", "resources/graphics/logo.png");
@@ -70,15 +70,18 @@ void Menu::loadResources(ResourceManager* resourceManager)
 	resourceManager->loadFont("font", "resources/fonts/font.otf");
 	m_menuTexts[0].setFont(resourceManager->getFont("font"));
 	m_menuTexts[1].setFont(resourceManager->getFont("font"));
-}
-
-void Menu::onCollision(Entity* otherEntity)
-{
+	m_bestScoreText.setFont(resourceManager->getFont("font"));
 }
 
 void Menu::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	target.draw(m_logoSprite, states);
+	target.draw(m_bestScoreText, states);
 	target.draw(m_menuTexts[0], states);
 	target.draw(m_menuTexts[1], states);
+}
+
+void Menu::setBestScore(size_t score)
+{
+	m_bestScoreText.setString("Best score: " + std::to_string(score));
 }

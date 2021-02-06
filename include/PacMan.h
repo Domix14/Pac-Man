@@ -7,20 +7,20 @@ class PacMan :
 public:
 	PacMan(class Game* game);
 	
-	virtual void loadResources(ResourceManager* resourceManager) override;
-	virtual void update(float deltaTime) override;
-	virtual void beginPlay() override;
-	virtual void onCollision(Entity* otherEntity) override;
+	void loadResources(ResourceManager* resourceManager) override;
+	void update(float deltaTime) override;
+	void onCollision(Entity* otherEntity) override;
 	
+	void restart();
+	sf::Vector2i getMapPosition() const;
+	sf::Vector2i getDirection() const;
+private:
+	void updatePosition(float deltaTime);
 	void changeAnimation();
 	void processInput();
 	void setDirection(sf::Vector2i newDirection);
 	bool findDestination(sf::Vector2i direction);
-	void restart();
-	sf::Vector2i getMapPosition() const;
-	sf::Vector2i getDirection() const;
-
-protected:
+	
 	const sf::Vector2i START_POSITION;
 	const sf::Vector2i START_DIRECTION;
 	

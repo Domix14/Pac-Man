@@ -1,9 +1,9 @@
 #include "PacManGame.h"
 
 #include "Map.h"
-#include "Utilities.h"
-
 #include "Engine.h"
+
+#include <fstream>
 
 PacManGame::PacManGame() :
 	Game(WINDOW_WIDTH, WINDOW_HEIGHT, "Pac-Man"),
@@ -15,7 +15,8 @@ PacManGame::PacManGame() :
 	m_clyde(this, &m_pacMan),
 	m_inky(this, &m_pacMan, &m_blinky),
 	m_level(this),
-	m_scoreText(this),
+	m_scoreText(this, 20, sf::Vector2f(0.f, 0.f)),
+	m_livesText(this, 20, sf::Vector2f(550.f, 0.f)),
 	m_score(0)
 {
 	m_statesProperties[NewGame].emplace_back(0.f, 0, 1, GameState::Scatter, GhostState::Scatter);
@@ -23,13 +24,9 @@ PacManGame::PacManGame() :
 	m_statesProperties[Chase].emplace_back(20.f, 0, 1, GameState::Scatter, GhostState::Chase);
 }
 
-PacManGame::~PacManGame()
-{
-	
-}
-
 void PacManGame::launch()
 {
+	loadScore();
 	openMenu();
 }
 
@@ -46,11 +43,13 @@ void PacManGame::exit()
 void PacManGame::openMenu()
 {
 	getEngine()->addEntity(&m_menu);
+	m_menu.setBestScore(m_bestScore);
 }
 
 void PacManGame::closeGame()
 {
 	m_level.destroy();
+	m_livesText.destroy();
 	m_blinky.destroy();
 	m_scoreText.destroy();
 	m_pacMan.destroy();
@@ -75,6 +74,7 @@ void PacManGame::startGame()
 
 	getEngine()->addEntity(&m_level);
 	getEngine()->addEntity(&m_scoreText);
+	getEngine()->addEntity(&m_livesText);
 	getEngine()->addEntity(&m_pacMan);
 	getEngine()->addEntity(&m_blinky);
 	getEngine()->addEntity(&m_pinky);
@@ -119,15 +119,23 @@ void PacManGame::spawnCoins()
 void PacManGame::addScore(size_t score)
 {
 	m_score += score;
-	m_scoreText.updateScore(m_score);
+	m_scoreText.setText("Score: " + std::to_string(m_score));
 }
 
 void PacManGame::killPacMan()
 {
 	m_lives--;
+	m_livesText.setText("Lives: " + std::to_string(m_lives));
 	if(m_lives < 0)
 	{
+		if(m_score > m_bestScore)
+		{
+			m_bestScore = m_score;
+			saveScore();
+		}
 		resetGame();
+		openMenu();
+		closeGame();
 	}
 	else
 	{
@@ -142,19 +150,21 @@ void PacManGame::resetPositions()
 	m_pinky.restart();
 	m_inky.restart();
 	m_clyde.restart();
+	changeState(GameState::NewGame);
 }
 
 void PacManGame::resetGame()
 {
-	m_lives = 4;
+	m_lives = 1;
 	resetLevel();
-	changeState(GameState::NewGame);
+	m_livesText.setText("Lives: " + std::to_string(m_lives));
+	m_scoreText.setText("Score: " + std::to_string(m_score));
 }
 
 void PacManGame::resetLevel()
 {
 	resetPositions();
-	m_coinCount = 100;
+	m_coinCount = 219;
 }
 
 void PacManGame::changeState(GameState state)
@@ -207,4 +217,24 @@ void PacManGame::pickPowerUp()
 	m_pinky.changeState(GhostState::Frightened);
 	m_inky.changeState(GhostState::Frightened);
 	m_clyde.changeState(GhostState::Frightened);
+}
+
+void PacManGame::saveScore() const
+{
+	std::ofstream file("best_score.txt");
+	if (file.is_open())
+	{
+		file << m_bestScore;
+		file.close();
+	}
+}
+
+void PacManGame::loadScore()
+{
+	std::ifstream file("best_score.txt");
+	if (file.is_open())
+	{
+		file >> m_bestScore;
+		file.close();
+	}
 }

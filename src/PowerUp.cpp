@@ -15,15 +15,3 @@ void PowerUp::loadResources(ResourceManager* resourceManager)
 	resourceManager->loadTexture("power_up", "resources/graphics/power_up.png");
 	m_sprite.setTexture(resourceManager->getTexture("power_up"));
 }
-
-void PowerUp::update(float deltaTime)
-{
-}
-
-void PowerUp::beginPlay()
-{
-}
-
-void PowerUp::onCollision(Entity* otherEntity)
-{
-}

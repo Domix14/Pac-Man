@@ -24,7 +24,6 @@ public:
 	const ResourceManager* getResourceManager() const;
 	void showFPS(bool bShow);
 	
-	
 private:
 	class Game* m_game;
 	

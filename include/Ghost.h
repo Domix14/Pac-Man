@@ -2,7 +2,6 @@
 #include "Entity.h"
 #include "Animation.h"
 
-#include <stack>
 #include <array>
 
 enum class GhostState
@@ -43,13 +42,15 @@ class Ghost :
 public:
 	Ghost(Game* game);
 
-	virtual void update(float deltaTime) override;
-	virtual void beginPlay() override;
-	virtual void onCollision(Entity* otherEntity) override;
+	void update(float deltaTime) override;
+	void onCollision(Entity* otherEntity) override;
 
+	sf::Vector2i getMapPosition() const;
 	void changeGlobalState(GhostState newState);
 	void changeState(GhostState newState);
-	sf::Vector2i getMapPosition() const;
+	virtual void restart();
+	
+protected:
 	void updateDirection();
 	void findNextPosition();
 	void setDirection(sf::Vector2i nextDirection);
@@ -60,10 +61,7 @@ public:
 	std::vector<sf::Vector2i> findAvailableDirections() const;
 	void exitGhostHouse();
 	void updateStateTimer(float deltaTime);
-	virtual void restart();
-
 	
-protected:
 	GhostState m_ghostState;
 	GhostState m_globalGhostState;
 	std::unordered_map<GhostState, GhostStateProperties> m_stateProperties;
@@ -91,3 +89,55 @@ protected:
 	const float SLOW_MOVEMENT_SPEED;
 };
 
+class Blinky :
+	public Ghost
+{
+public:
+	Blinky(class Game* game, const class PacMan* pacMan);
+
+	void findChaseDirection() override;
+	void loadResources(ResourceManager* resourceManager) override;
+
+private:
+	const class PacMan* m_pacMan;
+};
+
+class Clyde :
+	public Ghost
+{
+public:
+	Clyde(class Game* game, const class PacMan* pacMan);
+
+	void findChaseDirection() override;
+	void loadResources(ResourceManager* resourceManager) override;
+
+private:
+	const class PacMan* m_pacMan;
+};
+
+class Inky :
+	public Ghost
+{
+public:
+	Inky(Game* game, const class PacMan* pacMan, const Ghost* blinky);
+
+	void findChaseDirection() override;
+	void loadResources(ResourceManager* resourceManager) override;
+
+private:
+	const class PacMan* m_pacMan;
+	const Ghost* m_blinky;
+};
+
+class Pinky :
+	public Ghost
+{
+public:
+	Pinky(class Game* game, const class PacMan* pacMan);
+
+	void findChaseDirection() override;
+	void loadResources(ResourceManager* resourceManager) override;
+
+private:
+	const class PacMan* m_pacMan;
+};

@@ -11,7 +11,7 @@ PacMan::PacMan(Game* game) :
 	Entity(game),
 	START_POSITION({11,20}),
 	START_DIRECTION({ 0,-1 }),
-	m_movementSpeed(80.f)
+	m_movementSpeed(100.f)
 {
 	m_bMovable = true;
 	m_bEnableCollision = true;
@@ -22,19 +22,14 @@ PacMan::PacMan(Game* game) :
 
 void PacMan::loadResources(ResourceManager* resourceManager)
 {
-	/*resourceManager->loadTexture("pacman", "resources/graphics/pacman.png");
-	m_sprite.setTexture(resourceManager->getTexture("pacman"));*/
-
 	resourceManager->loadTexture("pacman_anim", "resources/graphics/pacman_anim.png");
-	/*m_sprite.setTexture(resourceManager->getTexture("pacman"));
-	m_sprite.setTextureRect(sf::IntRect(0, 0, 30, 30));*/
 	m_sprite.setTexture(resourceManager->getTexture("pacman_anim"));
 
 	m_animation.addRects("right", { sf::IntRect(0, 0, 30, 30), sf::IntRect(30, 0, 30, 30) });
 	m_animation.addRects("up", { sf::IntRect(0, 30, 30, 30), sf::IntRect(30, 30, 30, 30) });
 	m_animation.addRects("left", { sf::IntRect(0, 60, 30, 30), sf::IntRect(30, 60, 30, 30) });
 	m_animation.addRects("down", { sf::IntRect(0, 90, 30, 30), sf::IntRect(30, 90, 30, 30) });
-	m_animation.setFrameTime(0.4f);
+	m_animation.setFrameTime(0.25f);
 	m_animation.setAnimation("down", m_sprite);
 }
 
@@ -43,16 +38,25 @@ void PacMan::update(float deltaTime)
 	processInput();
 	m_animation.update(deltaTime, m_sprite);
 
+	updatePosition(deltaTime);
+}
+
+void PacMan::updatePosition(float deltaTime)
+{
+	//Allows to turn back in any moment 
 	const auto directionDiff = m_direction + m_nextDirection;
-	if(directionDiff.x == 0 && directionDiff.y == 0)
+	if (directionDiff.x == 0 && directionDiff.y == 0)
 	{
-		if(findDestination(m_nextDirection))
+		if (findDestination(m_nextDirection))
 		{
 			setDirection(m_nextDirection);
 		}
 	}
-	
+
+	//Calculate next position
 	const sf::Vector2f nextPosition = getPosition() + (static_cast<sf::Vector2f>(m_direction) * m_movementSpeed * deltaTime);
+	
+	//Prevent to move more than one block in one frame
 	if (length(nextPosition - m_destination) < length(getPosition() - m_destination))
 	{
 		setPosition(nextPosition);
@@ -60,7 +64,7 @@ void PacMan::update(float deltaTime)
 	else
 	{
 		setPosition(m_destination);
-		if(findDestination(m_nextDirection))
+		if (findDestination(m_nextDirection))
 		{
 			setDirection(m_nextDirection);
 		}
@@ -71,20 +75,15 @@ void PacMan::update(float deltaTime)
 	}
 }
 
-void PacMan::beginPlay()
-{
-	restart(); 
-}
-
 void PacMan::onCollision(Entity* otherEntity)
 {
-	auto *point = dynamic_cast<Coin*>(otherEntity);
+	auto* point = dynamic_cast<Coin*>(otherEntity);
 	if(point)
 	{
-		point->destroy();
 		auto* game = dynamic_cast<PacManGame*>(getGame());
 		if (game)
 		{
+			point->destroy();
 			game->pickCoin();
 		}
 	}
@@ -93,10 +92,10 @@ void PacMan::onCollision(Entity* otherEntity)
 		auto* powerUp = dynamic_cast<PowerUp*>(otherEntity);
 		if(powerUp)
 		{
-			powerUp->destroy();
 			auto* game = dynamic_cast<PacManGame*>(getGame());
 			if (game)
 			{
+				powerUp->destroy();
 				game->pickPowerUp();
 			}
 		}
@@ -144,7 +143,7 @@ void PacMan::processInput()
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 	{
-		auto game = dynamic_cast<PacManGame*>(getGame());
+		auto* game = dynamic_cast<PacManGame*>(getGame());
 		if (game)
 		{
 			game->openMenu();
@@ -198,3 +197,5 @@ sf::Vector2i PacMan::getDirection() const
 {
 	return m_direction;
 }
+
+

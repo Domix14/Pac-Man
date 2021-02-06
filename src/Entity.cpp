@@ -1,14 +1,12 @@
 #include "Entity.h"
 
 Entity::Entity(Game* game) :
-	m_game(game),
 	m_bAlive(true),
 	m_bDraw(true),
 	m_bEnableCollision(false),
 	m_bDrawCollisionRect(false),
-	m_bMovable(false)
-{
-}
+	m_bMovable(false),
+	m_game(game) {}
 
 void Entity::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
@@ -46,7 +44,7 @@ void Entity::setPosition(sf::Vector2f position)
 	m_collisionRect.top = position.y + m_collisionRectOffset.y;
 }
 
-bool Entity::isCollisionEnabled()
+bool Entity::isCollisionEnabled() const
 {
 	return m_bEnableCollision;
 }
@@ -71,7 +69,7 @@ void Entity::destroy()
 	m_bAlive = false;
 }
 
-void Entity::reset()
+void Entity::setAlive()
 {
 	m_bAlive = true;
 }

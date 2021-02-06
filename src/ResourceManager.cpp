@@ -4,6 +4,8 @@
 
 void ResourceManager::loadTexture(const std::string& textureName, const std::string& texturePath)
 {
+	if (m_textures.find(textureName) != m_textures.end()) return;
+	
 	sf::Texture newTexture;
 	if(newTexture.loadFromFile(texturePath))
 	{
@@ -29,6 +31,8 @@ const sf::Texture& ResourceManager::getTexture(const std::string& textureName)
 
 void ResourceManager::loadFont(const std::string& fontName, const std::string& fontPath)
 {
+	if (m_fonts.find(fontName) != m_fonts.end()) return;
+	
 	sf::Font newFont;
 	if (newFont.loadFromFile(fontPath))
 	{
