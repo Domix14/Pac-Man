@@ -45,10 +45,17 @@ public:
 	void update(float deltaTime) override;
 	void onCollision(Entity* otherEntity) override;
 
+	/*Returns map position*/
 	sf::Vector2i getMapPosition() const;
+
+	/*Changes global state*/
 	void changeGlobalState(GhostState newState);
+
+	/*Change ghost state*/
 	void changeState(GhostState newState);
-	virtual void restart();
+
+	/*Restart ghost*/
+	void restart();
 	
 protected:
 	void updateDirection();
@@ -57,7 +64,7 @@ protected:
 	void changeAnimation();
 	void goToTarget(sf::Vector2i position);
 	bool checkPosition(sf::Vector2i position) const;
-	virtual  void findChaseDirection() = 0;
+	virtual void findChaseDirection() = 0;
 	std::vector<sf::Vector2i> findAvailableDirections() const;
 	void exitGhostHouse();
 	void updateStateTimer(float deltaTime);
@@ -95,6 +102,7 @@ class Blinky :
 public:
 	Blinky(class Game* game, const class PacMan* pacMan);
 
+	/*Find chase direction, different for every ghost*/
 	void findChaseDirection() override;
 	void loadResources(ResourceManager* resourceManager) override;
 

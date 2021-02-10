@@ -11,24 +11,28 @@ class Engine :
 public:
 	Engine::Engine(class Game* game);
 
+	/*Starts the engine*/
 	void start();
+
+	/*Returns delta */
 	float getDeltaTime() const;
-	float resetClock();
-	float getFPS(float deltaTime) const;
-	
+
+	/*Add entity*/
 	void addEntity(Entity* entity);
+
+	/*Returns resource manager*/
+	const ResourceManager* getResourceManager() const;
+	
+private:
+	float resetClock();
 	void updateEntities(float deltaTime);
 	void drawEntities();
 	void checkEntitiesCollisions();
 	void checkForDestroyedEntities();
-	const ResourceManager* getResourceManager() const;
-	void showFPS(bool bShow);
 	
-private:
 	class Game* m_game;
 	
 	sf::Clock m_frameClock;
-	bool m_bShowFPS;
 	
 	std::vector<Entity*> m_entities;
 

@@ -9,6 +9,7 @@ public:
 	void loadResources(ResourceManager* resourceManager) override;
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
+	/*Set displayed text*/
 	void setText(const std::string& newText);
 private:
 	sf::Text m_text;

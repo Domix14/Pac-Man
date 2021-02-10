@@ -10,9 +10,14 @@ public:
 	void loadResources(ResourceManager* resourceManager) override;
 	void update(float deltaTime) override;
 	void onCollision(Entity* otherEntity) override;
-	
+
+	/*Restart PacMan position*/
 	void restart();
+
+	/*Returns map position*/
 	sf::Vector2i getMapPosition() const;
+
+	/*Returns direction*/
 	sf::Vector2i getDirection() const;
 private:
 	void updatePosition(float deltaTime);

@@ -4,8 +4,7 @@
 Engine::Engine(Game* game) :
 	m_game(game),
 	sf::RenderWindow(sf::VideoMode(static_cast<unsigned int>(game->getWindowWidth()), static_cast<unsigned int>(game->getWindowHeight())), game->getTitle()),
-	m_frameClock(),
-	m_bShowFPS(false)
+	m_frameClock()
 {
 	
 }
@@ -46,12 +45,6 @@ void Engine::start()
 		clear();
 		
 		drawEntities();
-
-		if (m_bShowFPS)
-		{
-			sf::Text fpsText(std::to_string(static_cast<int>(getFPS(deltaTime))), m_resourceManager.getFont("fps_font"));
-			draw(fpsText);
-		}
 		
 		display();
 	}
@@ -62,11 +55,6 @@ void Engine::start()
 float Engine::resetClock()
 {
 	return m_frameClock.restart().asSeconds();
-}
-
-float Engine::getFPS(float deltaTime) const
-{
-	return 1.f / deltaTime;
 }
 
 //Returns time between frames
@@ -145,9 +133,4 @@ void Engine::checkForDestroyedEntities()
 const ResourceManager* Engine::getResourceManager() const
 {
 	return &m_resourceManager;
-}
-
-void Engine::showFPS(bool bShow)
-{
-	m_bShowFPS = bShow;
 }

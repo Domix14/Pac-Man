@@ -11,6 +11,7 @@ public:
 	void loadResources(ResourceManager* resourceManager) override;
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
+	/*Set score showed on screen*/
 	void setBestScore(size_t score);
 private:
 	sf::Sprite m_logoSprite;
