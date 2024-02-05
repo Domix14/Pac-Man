@@ -1,69 +1,23 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.20)
 
-project(Pac-Man)
+include(FetchContent)
 
+project(PacManClone)
 
+set(CMAKE_CXX_STANDARD 11)
 
-set(HEADERS
-    include/Engine.h
-    include/Entity.h
-    include/Game.h
-    include/PacManGame.h
-    include/ResourceManager.h
-    include/PacMan.h
-    include/Map.h
-    include/Level.h
-    include/Coin.h
-    include/Ghost.h
-    include/ScoreText.h
-    include/Text.h
-    include/Blinky.h
-    include/Pinky.h
-    include/Clyde.h
-    include/Inky.h
-    include/PowerUp.h
-    include/Animation.h
-    include/Menu.h
-    include/Utilities.h)
+set(SFML_VERSION "2.5.1")
 
-set(SOURCE
-	src/main.cpp
-  src/Engine.cpp
-  src/Entity.cpp
-  src/Game.cpp
-  src/PacManGame.cpp
-  src/ResourceManager.cpp
-  src/PacMan.cpp
-  src/Level.cpp
-  src/Coin.cpp
-  src/Ghost.cpp
-  src/ScoreText.cpp
-  src/Text.cpp
-  src/Blinky.cpp
-  src/Clyde.cpp
-  src/Inky.cpp
-  src/PowerUp.cpp
-  src/Animation.cpp
-  src/Menu.cpp
-  src/Pinky.cpp)
+FetchContent_Declare(
+    sfml
+    GIT_REPOSITORY "https://github.com/SFML/SFML.git"
+    GIT_TAG        "${SFML_VERSION}"
+)
 
-include_directories(
-  ${CMAKE_SOURCE_DIR}/include)
-
-add_executable (Pac-Man ${SOURCE} ${HEADERS})
-file(COPY resources DESTINATION ${CMAKE_BINARY_DIR})
-
-
-#Find SFML
-set(SFML_STATIC_LIBRARIES TRUE)
-find_package(SFML 2.5 COMPONENTS graphics window system audio)
-if(SFML_FOUND)
-	target_link_libraries(Pac-Man sfml-graphics sfml-window sfml-system sfml-audio)
-endif(SFML_FOUND)
-
-
-
-if(WIN32)
-  file(COPY ${SFML_DIR}/../../../bin/openal32.dll
-    DESTINATION .)
+FetchContent_GetProperties(sfml)
+if(NOT sfml_POPULATED)
+    FetchContent_Populate(sfml)
+    add_subdirectory(${sfml_SOURCE_DIR} ${sfml_BINARY_DIR})
 endif()
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/src)

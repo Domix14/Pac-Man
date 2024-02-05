@@ -2,34 +2,15 @@
 
 #include "Engine.h"
 
-Game::Game(size_t width, size_t height, const std::string& title) :
-	m_windowWidth(width),
-	m_windowHeight(height),
-	m_title(title)
-{
-}
+Game::Game(size_t width, size_t height, const std::string &title)
+    : windowWidth(width), windowHeight(height), title(title) {}
 
-size_t Game::getWindowWidth() const
-{
-	return m_windowWidth;
-}
+size_t Game::getWindowWidth() const { return windowWidth; }
 
-size_t Game::getWindowHeight() const
-{
-	return m_windowHeight;
-}
+size_t Game::getWindowHeight() const { return windowHeight; }
 
-std::string Game::getTitle() const
-{
-	return m_title;
-}
+std::string Game::getTitle() const { return title; }
 
-void Game::setEngine(Engine* engine)
-{
-	m_engine = engine;
-}
+void Game::setEngine(Engine *engine) { engine = engine; }
 
-Engine* Game::getEngine() const
-{
-	return m_engine;
-}
+Engine *Game::getEngine() const { return engine; }

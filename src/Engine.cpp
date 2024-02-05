@@ -1,136 +1,109 @@
 #include "Engine.h"
 #include "Game.h"
 
-Engine::Engine(Game* game) :
-	m_game(game),
-	sf::RenderWindow(sf::VideoMode(static_cast<unsigned int>(game->getWindowWidth()), static_cast<unsigned int>(game->getWindowHeight())), game->getTitle()),
-	m_frameClock()
-{
-	
+Engine::Engine(Game *game)
+    : sf::RenderWindow(
+          sf::VideoMode(static_cast<unsigned int>(game->getWindowWidth()),
+                        static_cast<unsigned int>(game->getWindowHeight())),
+          game->getTitle()),
+      game(game), frameClock(), entities(), resourceManager() {}
+
+void Engine::start() {
+  resourceManager.loadFont("fps_font", "resources/fonts/fps_font.ttf");
+
+  game->setEngine(this);
+  game->launch();
+
+  for (auto &entity : entities) {
+    entity->beginPlay();
+  }
+
+  resetClock();
+
+  while (isOpen()) {
+    sf::Event event;
+    if (pollEvent(event)) {
+      if (event.type == sf::Event::Closed) {
+        close();
+      }
+    }
+
+    const auto deltaTime = resetClock();
+
+    game->update(deltaTime);
+    updateEntities(deltaTime);
+    checkEntitiesCollisions();
+    checkForDestroyedEntities();
+
+    clear();
+
+    drawEntities();
+
+    display();
+  }
 }
 
-void Engine::start()
-{
-	m_resourceManager.loadFont("fps_font", "resources/fonts/fps_font.ttf");
-	
+float Engine::resetClock() { return frameClock.restart().asSeconds(); }
 
-	m_game->setEngine(this);
-	m_game->launch();
-	
-	for(auto& entity : m_entities)
-	{
-		entity->beginPlay();
-	}
-
-	resetClock();
-	
-	while(isOpen())
-	{
-		sf::Event event;
-		if(pollEvent(event))
-		{
-			if(event.type == sf::Event::Closed)
-			{
-				close();
-			}
-		}
-		
-		const auto deltaTime = resetClock();
-
-		m_game->update(deltaTime);
-		updateEntities(deltaTime);
-		checkEntitiesCollisions();
-		checkForDestroyedEntities();
-		
-		clear();
-		
-		drawEntities();
-		
-		display();
-	}
+// Returns time between frames
+float Engine::getDeltaTime() const {
+  return frameClock.getElapsedTime().asMilliseconds() / 1000.f;
 }
 
-
-
-float Engine::resetClock()
-{
-	return m_frameClock.restart().asSeconds();
+void Engine::addEntity(Entity *entity) {
+  entity->setAlive();
+  entity->loadResources(&resourceManager);
+  entity->beginPlay();
+  entities.push_back(entity);
 }
 
-//Returns time between frames
-float Engine::getDeltaTime() const
-{
-	return m_frameClock.getElapsedTime().asMilliseconds() / 1000.f;
+void Engine::updateEntities(float deltaTime) {
+  for (auto &entity : entities) {
+    if (entity->isAlive()) {
+      entity->update(deltaTime);
+    }
+  }
 }
 
-
-void Engine::addEntity(Entity* entity)
-{
-	entity->setAlive();
-	entity->loadResources(&m_resourceManager);
-	entity->beginPlay();
-	m_entities.push_back(entity);
+void Engine::drawEntities() {
+  for (auto &entity : entities) {
+    if (entity->isAlive()) {
+      draw(*entity);
+    }
+  }
 }
 
-void Engine::updateEntities(float deltaTime)
-{
-	for(auto& entity : m_entities)
-	{
-		if (entity->isAlive())
-		{
-			entity->update(deltaTime);
-		}
-	}
+void Engine::checkEntitiesCollisions() {
+  for (auto movableEntity = entities.begin(); movableEntity != entities.end();
+       ++movableEntity) {
+    if ((*movableEntity)->isCollisionEnabled() &&
+        (*movableEntity)->isMovable()) {
+      for (auto otherEntity = entities.begin(); otherEntity != entities.end();
+           ++otherEntity) {
+        if ((*otherEntity)->isCollisionEnabled() &&
+            otherEntity != movableEntity) {
+          if ((*otherEntity)
+                  ->getCollisionRect()
+                  .intersects((*movableEntity)->getCollisionRect())) {
+            (*movableEntity)->onCollision(*otherEntity);
+            (*otherEntity)->onCollision(*movableEntity);
+          }
+        }
+      }
+    }
+  }
 }
 
-void Engine::drawEntities()
-{
-	for (auto& entity : m_entities)
-	{
-		if (entity->isAlive())
-		{
-			draw(*entity);
-		}
-	}
+void Engine::checkForDestroyedEntities() {
+  for (auto it = entities.begin(); it != entities.end();) {
+    if (!(*it)->isAlive()) {
+      it = entities.erase(it);
+    } else {
+      ++it;
+    }
+  }
 }
 
-void Engine::checkEntitiesCollisions()
-{
-	for(auto movableEntity = m_entities.begin(); movableEntity != m_entities.end();++movableEntity)
-	{
-		if((*movableEntity)->isCollisionEnabled() && (*movableEntity)->isMovable())
-		{
-			for(auto otherEntity = m_entities.begin(); otherEntity != m_entities.end();++otherEntity)
-			{
-				if((*otherEntity)->isCollisionEnabled() && otherEntity != movableEntity)
-				{
-					if ((*otherEntity)->getCollisionRect().intersects((*movableEntity)->getCollisionRect()))
-					{
-						(*movableEntity)->onCollision(*otherEntity);
-						(*otherEntity)->onCollision(*movableEntity);
-					}
-				}
-			}
-		}
-	}
-}
-
-void Engine::checkForDestroyedEntities()
-{
-	for(auto it = m_entities.begin(); it != m_entities.end();)
-	{
-		if(!(*it)->isAlive())
-		{
-			it = m_entities.erase(it);
-		}
-		else
-		{
-			++it;
-		}
-	}
-}
-
-const ResourceManager* Engine::getResourceManager() const
-{
-	return &m_resourceManager;
+const ResourceManager *Engine::getResourceManager() const {
+  return &resourceManager;
 }
